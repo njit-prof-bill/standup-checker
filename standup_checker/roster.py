@@ -11,27 +11,37 @@ def load_team(roster_path: str) -> Team:
     with path.open("r", encoding="utf-8") as handle:
         payload = json.load(handle)
 
-    team_id = payload.get("team_id")
     students_payload = payload.get("students")
-    if not team_id or not isinstance(students_payload, list):
-        raise ValueError("Roster file must contain team_id and students.")
+    if not isinstance(students_payload, list) or not students_payload:
+        raise ValueError("Roster file must contain a non-empty students list.")
 
     students: list[Student] = []
+    team_name: str | None = None
     for item in students_payload:
         student_id = item.get("student_id")
-        name = item.get("name")
-        if not student_id or not name:
-            raise ValueError("Each student must contain student_id and name.")
+        student_name = item.get("student_name")
+        item_team_name = item.get("team_name")
+        discord_user_id = _optional_string(item.get("discord_user_id"))
+        if not student_id or not student_name or not item_team_name or not discord_user_id:
+            raise ValueError(
+                "Each student must contain student_id, student_name, team_name, and discord_user_id."
+            )
+        normalized_team_name = str(item_team_name).strip()
+        if team_name is None:
+            team_name = normalized_team_name
+        elif team_name != normalized_team_name:
+            raise ValueError("Roster file must contain students for exactly one team.")
         students.append(
             Student(
                 student_id=str(student_id),
-                name=str(name),
-                discord_user_id=_optional_string(item.get("discord_user_id")),
-                discord_username=_normalize_username(item.get("discord_username")),
+                student_name=str(student_name),
+                team_name=normalized_team_name,
+                discord_user_id=discord_user_id,
+                discord_display_name=_normalize_display_name(item.get("discord_display_name")),
             )
         )
 
-    return Team(team_id=str(team_id), students=students)
+    return Team(team_name=team_name, students=students)
 
 
 def _optional_string(value: object) -> str | None:
@@ -41,8 +51,5 @@ def _optional_string(value: object) -> str | None:
     return text or None
 
 
-def _normalize_username(value: object) -> str | None:
-    text = _optional_string(value)
-    if text is None:
-        return None
-    return text.casefold()
+def _normalize_display_name(value: object) -> str | None:
+    return _optional_string(value)

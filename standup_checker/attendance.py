@@ -18,12 +18,7 @@ def build_attendance_report(
     students_by_user_id = {
         student.discord_user_id: student
         for student in team.students
-        if student.discord_user_id is not None
-    }
-    students_by_username = {
-        student.discord_username: student
-        for student in team.students
-        if student.discord_username is not None
+        if student.discord_user_id
     }
 
     matched_messages: dict[str, list[StandupMessage]] = defaultdict(list)
@@ -33,8 +28,6 @@ def build_attendance_report(
         student = None
         if message.author_id is not None:
             student = students_by_user_id.get(message.author_id)
-        if student is None and message.author_username is not None:
-            student = students_by_username.get(message.author_username)
 
         if student is None:
             unmatched_messages.append(message)
@@ -54,7 +47,7 @@ def build_attendance_report(
     return AttendanceReport(
         target_date=target_date,
         timezone=str(timezone.key),
-        team_id=team.team_id,
+        team_name=team.team_name,
         thread_id=thread_id,
         records=records,
         unmatched_messages=unmatched_messages,

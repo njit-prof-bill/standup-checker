@@ -7,14 +7,15 @@ from datetime import date, datetime
 @dataclass(frozen=True)
 class Student:
     student_id: str
-    name: str
-    discord_user_id: str | None = None
-    discord_username: str | None = None
+    student_name: str
+    team_name: str
+    discord_user_id: str
+    discord_display_name: str | None = None
 
 
 @dataclass(frozen=True)
 class Team:
-    team_id: str
+    team_name: str
     students: list[Student]
 
 
@@ -44,7 +45,7 @@ class AttendanceRecord:
 class AttendanceReport:
     target_date: date
     timezone: str
-    team_id: str
+    team_name: str
     thread_id: str
     records: list[AttendanceRecord]
     unmatched_messages: list[StandupMessage]

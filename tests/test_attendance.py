@@ -9,12 +9,23 @@ from standup_checker.models import StandupMessage, Student, Team
 
 
 class AttendanceReportTests(unittest.TestCase):
-    def test_marks_present_and_absent(self) -> None:
+    def test_marks_present_and_absent_by_discord_user_id(self) -> None:
         team = Team(
-            team_id="team-1",
+            team_name="team-1",
             students=[
-                Student(student_id="s1", name="Alice", discord_user_id="100"),
-                Student(student_id="s2", name="Bob", discord_username="bob"),
+                Student(
+                    student_id="s1",
+                    student_name="Alice",
+                    team_name="team-1",
+                    discord_user_id="100",
+                ),
+                Student(
+                    student_id="s2",
+                    student_name="Bob",
+                    team_name="team-1",
+                    discord_user_id="200",
+                    discord_display_name="bob",
+                ),
             ],
         )
         messages = [
@@ -29,9 +40,9 @@ class AttendanceReportTests(unittest.TestCase):
             StandupMessage(
                 message_id="m2",
                 author_id="999",
-                author_username="intruder",
+                author_username="bob",
                 created_at=datetime(2026, 6, 13, 14, 0, tzinfo=timezone.utc),
-                content="Not on roster.",
+                content="Looks like Bob by display name only.",
                 thread_id="thread-1",
             ),
         ]

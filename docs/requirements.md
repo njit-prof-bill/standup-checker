@@ -36,10 +36,29 @@ Phase 1 is successful when the tool can, for one configured team thread:
 Phase 1 requires:
 
 - a Discord bot token,
-- a configured Discord thread or team-specific source,
+- a configured Discord thread or a team-specific thread mapping source,
 - a roster for one team,
 - a target date,
 - and a course timezone.
+
+Discord access expectations for Phase 1:
+
+- the tool authenticates with a Discord bot token, not a personal Discord login
+- the bot must be invited to the CS 490 Discord server
+- the bot must be able to view the team channel or thread
+- the bot must have permission to read message history
+
+Discord targeting expectations for Phase 1:
+
+- each team must have an explicit Discord thread ID
+- Phase 1 must support either a direct `--thread-id` input or a team config file that maps `team_name -> thread_id`
+
+Roster expectations for Phase 1:
+
+- each student must be mapped to `student_name`
+- each student must be mapped to `team_name`
+- each student must be mapped to `discord_user_id`
+- each student may optionally include `discord_display_name`
 
 ### Attendance Decision
 
@@ -67,7 +86,7 @@ The Phase 1 dry-run report should include:
 
 Message metadata should include enough evidence for auditability, such as:
 
-- Discord username or user ID,
+- Discord display name or user ID,
 - message ID,
 - timestamp,
 - and a short content preview if appropriate.
@@ -82,6 +101,7 @@ Message metadata should include enough evidence for auditability, such as:
 ## Assumptions
 
 - Each team has a dedicated Discord thread for standups.
+- Each team thread ID is known explicitly and can be supplied directly or through team configuration.
 - The course uses one authoritative timezone for attendance dates.
 - A roster exists that maps students to Discord identities or can be made to do so.
 - Attendance in Phase 1 is binary: present or absent.
@@ -95,7 +115,7 @@ These items must be finalized before implementation is considered complete:
 - Are weekends and holidays in scope for attendance checks?
 - What happens when a student posts shortly after midnight?
 - How should unmapped or changed Discord usernames be handled?
-- Is roster mapping based on Discord user ID, username, or both?
+- Is roster mapping based on Discord user ID, display name, or both?
 - Should deleted messages count if they existed during the review window?
 - What report format is preferred for Phase 1: CLI text, CSV, JSON, or markdown?
 

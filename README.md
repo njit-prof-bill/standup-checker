@@ -17,33 +17,71 @@ Not implemented:
 - scheduling
 - grading logic
 
+## Discord Setup
+
+This tool uses a Discord bot token. It does not use a personal Discord login.
+
+Before Phase 1 can run:
+
+- the bot must be invited to the CS 490 Discord server
+- the bot must be able to view the target team channel or thread
+- the bot must have permission to read message history for that thread
+
+Phase 1 assumes each team has an explicit Discord thread ID for its standup thread.
+
 ## Inputs
 
 Required inputs can be provided as CLI flags or environment variables:
 
 - `DISCORD_BOT_TOKEN`
-- `DISCORD_THREAD_ID`
 - `ROSTER_FILE`
 - `TARGET_DATE` in `YYYY-MM-DD`
 - `COURSE_TIMEZONE` such as `America/New_York`
+
+Discord targeting must use one of these two models:
+
+- direct targeting with `DISCORD_THREAD_ID` or `--thread-id`
+- team-based targeting with `TEAM_NAME` plus `TEAM_CONFIG_FILE`
+
+`TEAM_CONFIG_FILE` maps team names to explicit Discord thread IDs.
 
 Roster format:
 
 ```json
 {
-  "team_id": "team-alpha",
   "students": [
     {
       "student_id": "s1",
-      "name": "Alice Student",
+      "student_name": "Alice Student",
+      "team_name": "team-alpha",
       "discord_user_id": "123456789012345678",
-      "discord_username": "alice"
+      "discord_display_name": "alice"
     }
   ]
 }
 ```
 
-`discord_user_id` is preferred for matching. `discord_username` is used as a fallback.
+Each student mapping must include:
+
+- `student_id`
+- `student_name`
+- `team_name`
+- `discord_user_id`
+- `discord_display_name`, optional
+
+`discord_user_id` is the attendance matching key. `discord_display_name` is optional metadata for review output.
+
+Team config format:
+
+```json
+{
+  "teams": {
+    "team-alpha": {
+      "thread_id": "123456789012345678"
+    }
+  }
+}
+```
 
 ## Usage
 
@@ -59,6 +97,18 @@ Run a dry-run attendance check:
 standup-checker \
   --roster examples/roster.example.json \
   --thread-id 123456789012345678 \
+  --target-date 2026-06-13 \
+  --timezone America/New_York \
+  --format text
+```
+
+Or use a team config file:
+
+```bash
+standup-checker \
+  --roster examples/roster.example.json \
+  --team-name team-alpha \
+  --team-config examples/team-config.example.json \
   --target-date 2026-06-13 \
   --timezone America/New_York \
   --format text
