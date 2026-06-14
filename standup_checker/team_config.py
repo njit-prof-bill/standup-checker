@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+from json import JSONDecodeError
 from pathlib import Path
 
 
@@ -19,8 +20,13 @@ def resolve_thread_id(
         )
 
     path = Path(team_config_path)
-    with path.open("r", encoding="utf-8") as handle:
-        payload = json.load(handle)
+    try:
+        with path.open("r", encoding="utf-8") as handle:
+            payload = json.load(handle)
+    except FileNotFoundError as exc:
+        raise ValueError(f"Team config file not found: {team_config_path}") from exc
+    except JSONDecodeError as exc:
+        raise ValueError(f"Team config file is not valid JSON: {team_config_path}") from exc
 
     teams = payload.get("teams")
     if not isinstance(teams, dict):

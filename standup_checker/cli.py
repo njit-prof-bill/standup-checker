@@ -68,7 +68,7 @@ def parse_args(argv: list[str] | None = None) -> AppConfig:
         raise ValueError(
             "Provide --thread-id, or provide both --team-name and --team-config."
         )
-    if has_team_targeting and not (args.team_name and args.team_config):
+    if not has_direct_thread and has_team_targeting and not (args.team_name and args.team_config):
         raise ValueError(
             "Provide both --team-name and --team-config when not using --thread-id."
         )
