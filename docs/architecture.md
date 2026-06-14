@@ -8,10 +8,22 @@ Phase 1 architecture should support one workflow:
 
 1. load configuration,
 2. load roster data for one team,
-3. read Discord thread messages,
-4. normalize messages into an internal format,
-5. apply attendance rules for a target date,
-6. produce a dry-run attendance report.
+3. resolve the target Discord thread ID,
+4. read Discord thread messages,
+5. normalize messages into an internal format,
+6. apply attendance rules for a target date,
+7. produce a dry-run attendance report.
+
+Thread resolution in Phase 1 must support either:
+
+- a direct CLI or environment-supplied thread ID
+- or a team config file that maps team names to thread IDs
+
+Discord access for Phase 1 must be bot-based:
+
+- the tool uses a Discord bot token
+- the bot must be invited to the CS 490 server
+- the bot must have permission to view the target team thread and read message history
 
 Even though external integrations are deferred for later expansion, the code structure should still separate:
 
@@ -35,6 +47,7 @@ Responsible for:
 - reading environment-based settings,
 - validating required configuration,
 - loading target date and team context,
+- resolving thread targeting from either direct thread ID input or team config,
 - and locating roster/configuration files.
 
 ### Roster Layer
@@ -42,7 +55,7 @@ Responsible for:
 Responsible for:
 
 - loading roster data for one team,
-- resolving student identity mappings,
+- resolving student identity mappings from student name, team name, Discord user ID, and optional display name,
 - and exposing a stable set of students expected for attendance.
 
 ### Discord Reader
@@ -95,10 +108,11 @@ The final Phase 1 implementation can choose one primary format and optionally su
 
 1. Configuration is loaded and validated.
 2. The roster for one team is loaded.
-3. Discord messages are fetched for the configured thread.
-4. Raw messages are normalized.
-5. The attendance engine evaluates the target date.
-6. A dry-run report is generated.
+3. The target thread ID is resolved from direct input or team configuration.
+4. Discord messages are fetched for the configured thread.
+5. Raw messages are normalized.
+6. The attendance engine evaluates the target date.
+7. A dry-run report is generated.
 
 ## Internal Data Model
 
@@ -108,6 +122,8 @@ Phase 1 should define these conceptual entities:
   - roster identity for one student
 - `Team`
   - the single configured team context
+- `TeamThreadConfig`
+  - mapping from team name to Discord thread ID
 - `StandupMessage`
   - normalized Discord message data
 - `AttendanceRecord`
@@ -141,6 +157,7 @@ Phase 1 should fail fast and clearly for:
 - missing configuration,
 - invalid target date,
 - missing roster mappings,
+- missing team-to-thread mappings when team-based targeting is used,
 - inaccessible Discord thread,
 - and ambiguous identity matches.
 

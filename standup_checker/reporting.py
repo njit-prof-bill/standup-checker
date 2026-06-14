@@ -8,7 +8,7 @@ from standup_checker.models import AttendanceReport
 def render_text_report(report: AttendanceReport) -> str:
     lines = [
         f"Attendance Report: {report.target_date.isoformat()}",
-        f"Team: {report.team_id}",
+        f"Team: {report.team_name}",
         f"Thread: {report.thread_id}",
         f"Timezone: {report.timezone}",
         "",
@@ -17,7 +17,9 @@ def render_text_report(report: AttendanceReport) -> str:
 
     for record in report.records:
         status = "present" if record.present else "absent"
-        lines.append(f"- {record.student.name} ({record.student.student_id}): {status}")
+        lines.append(
+            f"- {record.student.student_name} ({record.student.student_id}): {status}"
+        )
         for message in record.messages:
             lines.append(
                 "  "
@@ -46,12 +48,13 @@ def render_json_report(report: AttendanceReport) -> str:
     payload = {
         "target_date": report.target_date.isoformat(),
         "timezone": report.timezone,
-        "team_id": report.team_id,
+        "team_name": report.team_name,
         "thread_id": report.thread_id,
         "records": [
             {
                 "student_id": record.student.student_id,
-                "name": record.student.name,
+                "student_name": record.student.student_name,
+                "team_name": record.student.team_name,
                 "present": record.present,
                 "messages": [
                     {

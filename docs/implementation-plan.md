@@ -32,6 +32,8 @@ Document and confirm:
 - course timezone,
 - exact attendance rule,
 - roster source and identity mapping strategy,
+- Discord bot invite and permission expectations,
+- whether thread targeting will use direct thread IDs, team config, or both,
 - target report format,
 - and whether weekends, holidays, or after-midnight posts need special handling.
 
@@ -44,7 +46,8 @@ Output:
 
 Prepare the non-code project inputs that Phase 1 will rely on:
 
-- sample team roster,
+- sample team roster with explicit Discord identity mappings,
+- sample team-to-thread configuration,
 - sample Discord thread identifiers,
 - example attendance review date,
 - and sample message transcripts for validation.
@@ -74,6 +77,7 @@ Output:
 Build the minimum integration needed to:
 
 - authenticate with Discord,
+- authenticate with a bot token rather than a personal login,
 - access one configured thread,
 - and retrieve messages relevant to a target date.
 
@@ -164,6 +168,7 @@ Live end-to-end testing should be limited and used only to verify configuration 
 ## Risks To Address Early
 
 - roster-to-Discord identity mismatches,
+- missing or stale team-to-thread configuration,
 - unclear date-boundary rules,
 - inconsistent thread usage by students,
 - and overexpanding Phase 1 beyond a reviewable dry-run workflow.
