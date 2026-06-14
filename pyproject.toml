@@ -1,0 +1,12 @@
+[project]
+name = "standup-checker"
+version = "0.1.0"
+description = "Phase 1 Discord standup attendance checker"
+requires-python = ">=3.11"
+
+[project.scripts]
+standup-checker = "standup_checker.cli:main"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
