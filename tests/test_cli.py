@@ -14,6 +14,27 @@ from standup_checker.models import StandupMessage
 
 
 class CliTests(unittest.TestCase):
+    def test_direct_thread_id_does_not_require_team_config(self) -> None:
+        config = cli.parse_args(
+            [
+                "--roster",
+                "roster.json",
+                "--thread-id",
+                "thread-1",
+                "--team-name",
+                "team-1",
+                "--target-date",
+                "2026-06-13",
+                "--timezone",
+                "America/New_York",
+                "--bot-token",
+                "token",
+            ]
+        )
+
+        self.assertEqual(config.thread_id, "thread-1")
+        self.assertEqual(config.team_name, "team-1")
+
     def test_renders_json_report_with_direct_thread_id(self) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:
             roster_path = Path(temp_dir) / "roster.json"

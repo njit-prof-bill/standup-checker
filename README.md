@@ -91,6 +91,13 @@ Install in editable mode:
 python3 -m pip install -e .
 ```
 
+For a first live test:
+
+1. Set `DISCORD_BOT_TOKEN`.
+2. Use the sample roster and replace the student mappings with real Discord user IDs.
+3. Either provide a known standup `--thread-id` directly or update `examples/team-config.example.json`.
+4. Pick a date that already has known check-ins and run with `--format json` first so unmatched users are easy to inspect.
+
 Run a dry-run attendance check:
 
 ```bash
