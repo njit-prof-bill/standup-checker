@@ -1,13 +1,6 @@
 {
   "students": [
     {
-      "student_id": "chryscay",
-      "student_name": "Cayetano, Chrystian",
-      "team_name": "claude-scholors",
-      "discord_user_id": "chrys3819",
-      "discord_display_name": "chrys"
-    },
-    {
       "student_id": "Ramirezzz1",
       "student_name": "Ramirez, Ronald Esgardo",
       "team_name": "breeze",
