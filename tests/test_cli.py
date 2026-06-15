@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 from datetime import datetime, timezone
 import io
+import os
 import tempfile
 import unittest
 from contextlib import redirect_stdout
@@ -14,6 +15,86 @@ from standup_checker.models import StandupMessage
 
 
 class CliTests(unittest.TestCase):
+    def test_parse_args_loads_bot_token_from_dotenv(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            temp_path = Path(temp_dir)
+            dotenv_path = temp_path / ".env"
+            dotenv_path.write_text(
+                "\n".join(
+                    [
+                        "DISCORD_BOT_TOKEN=dotenv-token",
+                        "ROSTER_FILE=roster.json",
+                        "DISCORD_THREAD_ID=thread-1",
+                        "TARGET_DATE=2026-06-13",
+                        "COURSE_TIMEZONE=America/New_York",
+                    ]
+                ),
+                encoding="utf-8",
+            )
+            previous_cwd = Path.cwd()
+            with patch.dict(os.environ, {}, clear=True):
+                try:
+                    os.chdir(temp_path)
+                    config = cli.parse_args([])
+                finally:
+                    os.chdir(previous_cwd)
+
+        self.assertEqual(config.bot_token, "dotenv-token")
+        self.assertEqual(config.roster_path, "roster.json")
+        self.assertEqual(config.thread_id, "thread-1")
+
+    def test_environment_overrides_dotenv(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            temp_path = Path(temp_dir)
+            dotenv_path = temp_path / ".env"
+            dotenv_path.write_text(
+                "\n".join(
+                    [
+                        "DISCORD_BOT_TOKEN=dotenv-token",
+                        "ROSTER_FILE=roster.json",
+                        "DISCORD_THREAD_ID=thread-1",
+                        "TARGET_DATE=2026-06-13",
+                        "COURSE_TIMEZONE=America/New_York",
+                    ]
+                ),
+                encoding="utf-8",
+            )
+            previous_cwd = Path.cwd()
+            with patch.dict(os.environ, {"DISCORD_BOT_TOKEN": "env-token"}, clear=True):
+                try:
+                    os.chdir(temp_path)
+                    config = cli.parse_args([])
+                finally:
+                    os.chdir(previous_cwd)
+
+        self.assertEqual(config.bot_token, "env-token")
+
+    def test_bot_token_flag_overrides_environment_and_dotenv(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            temp_path = Path(temp_dir)
+            dotenv_path = temp_path / ".env"
+            dotenv_path.write_text(
+                "\n".join(
+                    [
+                        "DISCORD_BOT_TOKEN=dotenv-token",
+                        "ROSTER_FILE=roster.json",
+                        "DISCORD_THREAD_ID=thread-1",
+                        "TARGET_DATE=2026-06-13",
+                        "COURSE_TIMEZONE=America/New_York",
+                    ]
+                ),
+                encoding="utf-8",
+            )
+            previous_cwd = Path.cwd()
+            with patch.dict(os.environ, {"DISCORD_BOT_TOKEN": "env-token"}, clear=True):
+                try:
+                    os.chdir(temp_path)
+                    config = cli.parse_args(["--bot-token", "flag-token"])
+                finally:
+                    os.chdir(previous_cwd)
+
+        self.assertEqual(config.bot_token, "flag-token")
+
     def test_direct_thread_id_does_not_require_team_config(self) -> None:
         config = cli.parse_args(
             [

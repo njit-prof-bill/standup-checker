@@ -23,6 +23,33 @@ You should have:
 
 For the first live validation, use a team and date where you already know roughly who posted. That makes it much easier to spot identity or date-boundary problems quickly.
 
+## Preferred Local Setup: `.env`
+
+The preferred workflow is to keep reusable local inputs in a `.env` file in the repository root.
+The CLI loads `.env` automatically before argument parsing.
+
+Typical `.env` contents:
+
+```dotenv
+DISCORD_BOT_TOKEN=your-bot-token
+ROSTER_FILE=path/to/real-roster.json
+DISCORD_THREAD_ID=123456789012345678
+TARGET_DATE=2026-06-13
+COURSE_TIMEZONE=America/New_York
+```
+
+Precedence is:
+
+1. explicit CLI flags such as `--bot-token`
+2. real environment variables already exported in your shell
+3. values loaded from `.env`
+
+That means:
+
+- `.env` is the normal place to keep your bot token for local use,
+- exported shell variables can temporarily override `.env`,
+- and passing `--bot-token` overrides both.
+
 ## 1. Create a Discord Bot
 
 1. Go to the Discord Developer Portal.
@@ -31,7 +58,7 @@ For the first live validation, use a team and date where you already know roughl
 4. Open the application settings and go to the `Bot` section.
 5. Confirm that the bot user exists. New applications normally create one by default.
 6. Generate or reset the bot token.
-7. Store the token somewhere safe. You will need it as `DISCORD_BOT_TOKEN`.
+7. Store the token somewhere safe. For local use, place it in `.env` as `DISCORD_BOT_TOKEN`.
 
 Important:
 
@@ -170,7 +197,7 @@ The simplest first live validation is usually direct thread targeting, because i
 Before running:
 
 1. install the project in your environment if you have not already,
-2. set `DISCORD_BOT_TOKEN`,
+2. create or update `.env` with `DISCORD_BOT_TOKEN`,
 3. choose a roster file with real student IDs,
 4. choose a target date that already has standup posts,
 5. set the course timezone correctly.

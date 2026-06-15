@@ -5,7 +5,7 @@ import sys
 from datetime import date, datetime, time, timedelta, timezone
 
 from standup_checker.attendance import build_attendance_report
-from standup_checker.config import AppConfig, get_env
+from standup_checker.config import AppConfig, get_env, load_project_dotenv
 from standup_checker.discord_api import DiscordClient
 from standup_checker.reporting import render_json_report, render_text_report
 from standup_checker.roster import load_team
@@ -47,6 +47,7 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def parse_args(argv: list[str] | None = None) -> AppConfig:
+    load_project_dotenv()
     args = build_parser().parse_args(argv)
 
     missing = [

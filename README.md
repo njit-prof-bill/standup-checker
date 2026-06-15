@@ -91,9 +91,29 @@ Install in editable mode:
 python3 -m pip install -e .
 ```
 
+Preferred local configuration uses a `.env` file in the project root. The CLI loads `.env`
+automatically before parsing arguments, while keeping normal shell environment variables
+and explicit CLI flags as higher-precedence overrides.
+
+Example `.env`:
+
+```dotenv
+DISCORD_BOT_TOKEN=your-bot-token
+ROSTER_FILE=examples/roster.example.json
+DISCORD_THREAD_ID=123456789012345678
+TARGET_DATE=2026-06-13
+COURSE_TIMEZONE=America/New_York
+```
+
+Precedence is:
+
+1. explicit CLI flags such as `--bot-token`
+2. real environment variables already exported in the shell
+3. values loaded from `.env`
+
 For a first live test:
 
-1. Set `DISCORD_BOT_TOKEN`.
+1. Create a `.env` file with `DISCORD_BOT_TOKEN` and the other common inputs you want to reuse.
 2. Use the sample roster and replace the student mappings with real Discord user IDs.
 3. Either provide a known standup `--thread-id` directly or update `examples/team-config.example.json`.
 4. Pick a date that already has known check-ins and run with `--format json` first so unmatched users are easy to inspect.
