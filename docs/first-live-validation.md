@@ -111,7 +111,7 @@ Use the actual numeric user ID, not the visible display name. Display names can 
 
 ## 5. Populate the Roster File
 
-Use [examples/roster.example.json](/home/iambillmccann/repositories/standup-checker/examples/roster.example.json) as the template.
+Use [examples/roster.example.json](../examples/roster.example.json) as the template.
 
 Each student entry must include:
 
@@ -140,7 +140,7 @@ Recommended first-pass workflow:
 
 ## 6. Populate the Team Config File
 
-Use [examples/team-config.example.json](/home/iambillmccann/repositories/standup-checker/examples/team-config.example.json) as the template.
+Use [examples/team-config.example.json](../examples/team-config.example.json) as the template.
 
 This file maps a team name to a Discord thread ID.
 
