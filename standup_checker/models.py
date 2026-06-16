@@ -49,3 +49,11 @@ class AttendanceReport:
     thread_id: str
     records: list[AttendanceRecord]
     unmatched_messages: list[StandupMessage]
+
+
+@dataclass
+class MessageFetchStats:
+    raw_message_count: int = 0
+    filtered_message_count: int = 0
+    raw_author_usernames: list[str] = field(default_factory=list)
+    filtered_author_usernames: list[str] = field(default_factory=list)

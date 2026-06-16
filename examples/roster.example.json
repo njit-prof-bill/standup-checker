@@ -4,14 +4,14 @@
       "student_id": "s1",
       "student_name": "Alice Student",
       "team_name": "team-alpha",
-      "discord_user_id": "123456789012345678",
+      "discord_user_id": "alice",
       "discord_display_name": "alice"
     },
     {
       "student_id": "s2",
       "student_name": "Bob Student",
       "team_name": "team-alpha",
-      "discord_user_id": "234567890123456789",
+      "discord_user_id": "bob",
       "discord_display_name": "bob"
     }
   ]

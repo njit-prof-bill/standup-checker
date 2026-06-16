@@ -4,7 +4,7 @@ import json
 from datetime import datetime
 from urllib import error, parse, request
 
-from standup_checker.models import StandupMessage
+from standup_checker.models import MessageFetchStats, StandupMessage
 
 
 DISCORD_API_BASE_URL = "https://discord.com/api/v10"
@@ -20,9 +20,12 @@ class DiscordClient:
         thread_id: str,
         start_at: datetime,
         end_at: datetime,
+        debug_stats: MessageFetchStats | None = None,
     ) -> list[StandupMessage]:
         messages: list[StandupMessage] = []
         before: str | None = None
+        raw_message_count = 0
+        raw_author_usernames: list[str] = []
 
         while True:
             page = self._get_messages_page(thread_id=thread_id, limit=100, before=before)
@@ -30,6 +33,12 @@ class DiscordClient:
                 break
 
             normalized_page = [normalize_message(item, thread_id) for item in page]
+            raw_message_count += len(normalized_page)
+            raw_author_usernames.extend(
+                message.author_username
+                for message in normalized_page
+                if message.author_username is not None
+            )
             messages.extend(
                 message
                 for message in normalized_page
@@ -43,6 +52,15 @@ class DiscordClient:
             before = oldest_message.message_id
 
         messages.sort(key=lambda item: item.created_at)
+        if debug_stats is not None:
+            debug_stats.raw_message_count = raw_message_count
+            debug_stats.filtered_message_count = len(messages)
+            debug_stats.raw_author_usernames = raw_author_usernames
+            debug_stats.filtered_author_usernames = [
+                message.author_username
+                for message in messages
+                if message.author_username is not None
+            ]
         return messages
 
     def _get_messages_page(
@@ -107,9 +125,7 @@ def _optional_string(value: object) -> str | None:
 
 
 def _normalize_username(author: dict) -> str | None:
-    username = _optional_string(author.get("global_name")) or _optional_string(
-        author.get("username")
-    )
+    username = _optional_string(author.get("username"))
     if username is None:
         return None
     return username.casefold()

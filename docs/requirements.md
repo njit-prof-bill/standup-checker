@@ -60,6 +60,9 @@ Roster expectations for Phase 1:
 - each student must be mapped to `discord_user_id`
 - each student may optionally include `discord_display_name`
 
+For the current Phase 1 implementation, `discord_user_id` temporarily stores the
+student's Discord `username` value rather than the numeric Discord account ID.
+
 ### Attendance Decision
 
 For Phase 1, the default attendance rule is:
@@ -86,7 +89,7 @@ The Phase 1 dry-run report should include:
 
 Message metadata should include enough evidence for auditability, such as:
 
-- Discord display name or user ID,
+- Discord username, display name, or both as available,
 - message ID,
 - timestamp,
 - and a short content preview if appropriate.
@@ -115,7 +118,7 @@ These items must be finalized before implementation is considered complete:
 - Are weekends and holidays in scope for attendance checks?
 - What happens when a student posts shortly after midnight?
 - How should unmapped or changed Discord usernames be handled?
-- Is roster mapping based on Discord user ID, display name, or both?
+- Is roster mapping based on Discord username, Discord user ID, display name, or some combination?
 - Should deleted messages count if they existed during the review window?
 - What report format is preferred for Phase 1: CLI text, CSV, JSON, or markdown?
 

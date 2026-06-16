@@ -54,7 +54,7 @@ Roster format:
       "student_id": "s1",
       "student_name": "Alice Student",
       "team_name": "team-alpha",
-      "discord_user_id": "123456789012345678",
+      "discord_user_id": "alice",
       "discord_display_name": "alice"
     }
   ]
@@ -69,7 +69,12 @@ Each student mapping must include:
 - `discord_user_id`
 - `discord_display_name`, optional
 
-`discord_user_id` is the attendance matching key. `discord_display_name` is optional metadata for review output.
+For the current Phase 1 implementation, `discord_user_id` must contain the student's
+Discord `username` value, not the numeric Discord user ID. The field name is temporary
+and preserved only to avoid changing the JSON structure during live validation.
+`discord_display_name` is optional metadata for review output.
+
+TODO: rename `discord_user_id` to `discord_username` in a later cleanup.
 
 Team config format:
 
@@ -114,7 +119,7 @@ Precedence is:
 For a first live test:
 
 1. Create a `.env` file with `DISCORD_BOT_TOKEN` and the other common inputs you want to reuse.
-2. Use the sample roster and replace the student mappings with real Discord user IDs.
+2. Use the sample roster and replace the student mappings with real Discord usernames.
 3. Either provide a known standup `--thread-id` directly or update `examples/team-config.example.json`.
 4. Pick a date that already has known check-ins and run with `--format json` first so unmatched users are easy to inspect.
 

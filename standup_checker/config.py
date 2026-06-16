@@ -38,6 +38,7 @@ class AppConfig:
     target_date: date
     timezone_name: str
     report_format: str
+    debug_matching: bool = False
     thread_id: str | None = None
     team_name: str | None = None
     team_config_path: str | None = None

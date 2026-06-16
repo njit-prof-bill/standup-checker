@@ -6,7 +6,7 @@ The goal is narrow:
 
 1. create a Discord bot,
 2. invite it to the correct server,
-3. collect the IDs needed by the tool,
+3. collect the Discord values needed by the tool,
 4. populate the roster and team config files,
 5. run the tool against one real thread for one real date,
 6. compare the output to what you expect from manual review.
@@ -95,12 +95,12 @@ Notes:
 - No slash-command setup is required for this tool.
 - No message content interpretation is performed by the tool.
 
-## 4. Obtain the Required Discord IDs
+## 4. Obtain the Required Discord Values
 
 The tool itself needs:
 
 - thread ID,
-- Discord user IDs for each student,
+- Discord usernames for each student,
 - and a bot token.
 
 You also asked for the server ID. The current tool does not consume it, but it is still useful for manual verification and recordkeeping.
@@ -125,16 +125,16 @@ In Discord, enable `Developer Mode` first. Discord’s UI can move around over t
 
 Be careful to copy the thread ID, not just the parent channel ID.
 
-### Discord User IDs
+### Discord Usernames
 
 For each student:
 
 1. Find the student in the member list or in one of their messages.
-2. Right-click their username or avatar.
-3. Select `Copy User ID` or `Copy ID`.
-4. Save that value for the roster file.
+2. Note the student's Discord `username` exactly as it appears in the raw message author object.
+3. Save that value for the roster file.
 
-Use the actual numeric user ID, not the visible display name. Display names can change; user IDs are stable and are the matching key used by this project.
+For the current Phase 1 implementation, matching is done against Discord `author.username`.
+Do not use the numeric Discord account ID in the roster right now.
 
 ## 5. Populate the Roster File
 
@@ -145,24 +145,32 @@ Each student entry must include:
 - `student_id`: your course or roster identifier for the student
 - `student_name`: the human-readable student name
 - `team_name`: the team this roster belongs to
-- `discord_user_id`: the student’s numeric Discord user ID
+- `discord_user_id`: the student's Discord username for the current Phase 1 implementation
 
 Optional field:
 
 - `discord_display_name`: the current Discord display name, useful for manual review output
 
+Important:
+
+- Keep the field name `discord_user_id` unchanged in the JSON.
+- Even though the name says `user_id`, the current value must be the Discord username.
+- Do not put the numeric Discord account ID there for the current live validation path.
+
+TODO: rename `discord_user_id` to `discord_username` in a later cleanup.
+
 Rules to follow:
 
 - Put only one team in a single roster file.
 - Keep `team_name` identical for every student in that file.
-- Make sure every `discord_user_id` is unique.
-- Prefer real user IDs collected directly from Discord instead of copied usernames.
+- Make sure every `discord_user_id` value is unique within the team roster.
+- Copy the actual Discord username value exactly.
 
 Recommended first-pass workflow:
 
 1. Start from the example roster file.
 2. Replace the sample students with the real students for one team.
-3. Double-check each `discord_user_id` before running the tool.
+3. Double-check each `discord_user_id` username value before running the tool.
 4. Keep the file small and limited to one known team for the first validation.
 
 ## 6. Populate the Team Config File
@@ -198,7 +206,7 @@ Before running:
 
 1. install the project in your environment if you have not already,
 2. create or update `.env` with `DISCORD_BOT_TOKEN`,
-3. choose a roster file with real student IDs,
+3. choose a roster file with real student usernames,
 4. choose a target date that already has standup posts,
 5. set the course timezone correctly.
 
@@ -251,7 +259,7 @@ The Phase 1 result is a dry-run attendance report. It does not write to any exte
 
 ### What “present” means
 
-A student is marked `present` if the tool found at least one message in the target thread during the requested date window and that message author matched the student’s `discord_user_id`.
+A student is marked `present` if the tool found at least one message in the target thread during the requested date window and that message `author.username` matched the student’s `discord_user_id` value from the roster.
 
 ### What to review in the output
 
@@ -267,7 +275,7 @@ Also review the `unmatched_messages` section carefully.
 That section usually means one of these things:
 
 - someone posted in the thread who is not in the roster,
-- a rostered student’s Discord user ID was entered incorrectly,
+- a rostered student’s Discord username value was entered incorrectly,
 - the wrong thread was checked,
 - or a non-student account posted in the thread.
 
@@ -281,20 +289,20 @@ Check:
 2. every student you expect to be absent is marked absent,
 3. timestamps fall on the expected course date,
 4. no legitimate student messages appear under `unmatched_messages`,
-5. and no roster student is missing because of a bad `discord_user_id`.
+5. and no roster student is missing because of a bad `discord_user_id` username value.
 
 ### Common result patterns
 
 If a student is unexpectedly absent:
 
-- verify their `discord_user_id` in the roster,
+- verify their `discord_user_id` username value in the roster,
 - verify they posted in that exact thread,
 - verify the target date and timezone,
 - and check whether they posted just before or after midnight.
 
 If there are many unmatched messages:
 
-- confirm you copied user IDs correctly,
+- confirm you copied Discord usernames correctly,
 - confirm the roster is for the correct team,
 - confirm the selected thread is the actual standup thread,
 - and confirm other participants such as instructors or bots are expected to appear.
@@ -310,7 +318,7 @@ If the tool returns a Discord access error:
 
 1. Choose one team.
 2. Choose one date with known standup activity.
-3. Collect the thread ID and user IDs directly from Discord.
+3. Collect the thread ID and usernames directly from Discord.
 4. Populate the roster file carefully.
 5. Run with direct `--thread-id` and `--format json`.
 6. Compare the output to manual review of the thread.
@@ -323,7 +331,7 @@ If the tool returns a Discord access error:
 Your first live validation is successful when:
 
 - the bot can read the target thread,
-- the rostered students are matched correctly by Discord user ID,
+- the rostered students are matched correctly by Discord username,
 - the report matches manual review for the chosen date,
 - and any unmatched messages are explainable.
 

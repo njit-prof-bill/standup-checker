@@ -15,7 +15,7 @@ def build_attendance_report(
     timezone: ZoneInfo,
     messages: list[StandupMessage],
 ) -> AttendanceReport:
-    students_by_user_id = {
+    students_by_username = {
         student.discord_user_id: student
         for student in team.students
         if student.discord_user_id
@@ -26,8 +26,8 @@ def build_attendance_report(
 
     for message in messages:
         student = None
-        if message.author_id is not None:
-            student = students_by_user_id.get(message.author_id)
+        if message.author_username is not None:
+            student = students_by_username.get(message.author_username)
 
         if student is None:
             unmatched_messages.append(message)
