@@ -1,0 +1,46 @@
+{
+  "target_date": "2026-06-12",
+  "timezone": "America/New_York",
+  "team_name": "breeze",
+  "thread_id": "1509994039754231828",
+  "records": [
+    {
+      "student_id": "Ramirezzz1",
+      "student_name": "Ramirez, Ronald Esgardo",
+      "team_name": "breeze",
+      "present": true,
+      "messages": [
+        {
+          "message_id": "1515016585298055299",
+          "author_id": "1198711829417967638",
+          "author_username": "ronald_40402",
+          "timestamp": "2026-06-12T15:35:01.582000+00:00",
+          "content_preview": "This is Ronald (Attack 6) , I will be working on ticket S1-15 today."
+        }
+      ]
+    }
+  ],
+  "unmatched_messages": [
+    {
+      "message_id": "1515012217588809748",
+      "author_id": "689682850529935372",
+      "author_username": "brittlit",
+      "timestamp": "2026-06-12T15:17:40.239000+00:00",
+      "content_preview": "this is Brittney. Today I will be double checking tickets, requirements and stan"
+    },
+    {
+      "message_id": "1515014611269583019",
+      "author_id": "1341129167403745461",
+      "author_username": "esmeralda092333",
+      "timestamp": "2026-06-12T15:27:10.937000+00:00",
+      "content_preview": "This is Esmeralda. I finished working on my tickets but I will revise them to ma"
+    },
+    {
+      "message_id": "1515014776340615409",
+      "author_id": "935373067503407174",
+      "author_username": "pinkie_405",
+      "timestamp": "2026-06-12T15:27:50.293000+00:00",
+      "content_preview": "This is Sergio. I will be finishing up S1-014"
+    }
+  ]
+}

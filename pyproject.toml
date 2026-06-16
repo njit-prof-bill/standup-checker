@@ -3,6 +3,7 @@ name = "standup-checker"
 version = "0.1.0"
 description = "Phase 1 Discord standup attendance checker"
 requires-python = ">=3.11"
+dependencies = ["python-dotenv>=1.0,<2.0"]
 
 [project.scripts]
 standup-checker = "standup_checker.cli:main"

@@ -55,7 +55,7 @@ Responsible for:
 Responsible for:
 
 - loading roster data for one team,
-- resolving student identity mappings from student name, team name, Discord user ID, and optional display name,
+- resolving student identity mappings from student name, team name, the current `discord_user_id` roster field value, and optional display name,
 - and exposing a stable set of students expected for attendance.
 
 ### Discord Reader

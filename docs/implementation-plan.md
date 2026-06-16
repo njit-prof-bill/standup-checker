@@ -58,6 +58,11 @@ Output:
 - documented team/thread configuration shape
 - at least one realistic sample transcript for testing design
 
+Current live-validation note:
+
+- the Phase 1 implementation currently uses Discord `username` values stored in the `discord_user_id` roster field
+- that field name should be cleaned up later, but should not be changed during current validation work
+
 ### Step 3: Design The Data Model
 
 Define the internal records needed for:
