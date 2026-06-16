@@ -20,6 +20,22 @@ class Team:
 
 
 @dataclass(frozen=True)
+class CourseTeam:
+    team_name: str
+    thread_id: str
+    students: list[Student]
+
+
+@dataclass(frozen=True)
+class CourseConfig:
+    course: str
+    term: str
+    timezone: str
+    dates: list[date]
+    teams: list[CourseTeam]
+
+
+@dataclass(frozen=True)
 class StandupMessage:
     message_id: str
     author_id: str | None

@@ -1,0 +1,22 @@
+{
+  "course": "CS 490",
+  "term": "Summer 2026",
+  "timezone": "America/New_York",
+  "dates": [
+    "2026-06-12",
+    "2026-06-13"
+  ],
+  "teams": [
+    {
+      "team_name": "breeze",
+      "thread_id": "1509994039754231828",
+      "students": [
+        {
+          "student_id": "Ramirezzz1",
+          "student_name": "Ramirez, Ronald Esgardo",
+          "discord_user_id": "ronald"
+        }
+      ]
+    }
+  ]
+}
