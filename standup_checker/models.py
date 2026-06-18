@@ -67,6 +67,14 @@ class AttendanceReport:
     unmatched_messages: list[StandupMessage]
 
 
+@dataclass(frozen=True)
+class CourseAttendanceReport:
+    course: str
+    term: str
+    timezone: str
+    reports: list[AttendanceReport]
+
+
 @dataclass
 class MessageFetchStats:
     raw_message_count: int = 0
