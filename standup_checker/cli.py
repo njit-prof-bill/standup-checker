@@ -9,14 +9,21 @@ from standup_checker.attendance import build_attendance_report
 from standup_checker.config import AppConfig, get_env, load_project_dotenv
 from standup_checker.discord_api import DiscordClient
 from standup_checker.models import AttendanceReport, MessageFetchStats, StandupMessage, Team
-from standup_checker.reporting import render_json_report, render_text_report
-from standup_checker.roster import load_team
+from standup_checker.orchestration import build_course_attendance_report
+from standup_checker.reporting import (
+    render_json_course_report,
+    render_json_report,
+    render_text_course_report,
+    render_text_report,
+)
+from standup_checker.roster import load_course_config, load_team
 from standup_checker.team_config import resolve_thread_id
 
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="Dry-run Discord standup attendance checker")
     parser.add_argument("--roster", default=get_env("ROSTER_FILE"), help="Path to roster JSON")
+    parser.add_argument("--course-config", help="Path to canonical course config JSON")
     parser.add_argument("--thread-id", default=get_env("DISCORD_THREAD_ID"), help="Discord thread ID")
     parser.add_argument("--team-name", default=get_env("TEAM_NAME"), help="Team name")
     parser.add_argument(
@@ -60,10 +67,31 @@ def parse_args(argv: list[str] | None = None) -> AppConfig:
     missing = [
         name
         for name, value in (
+            ("--bot-token or DISCORD_BOT_TOKEN", args.bot_token),
+        )
+        if not value
+    ]
+    if missing:
+        raise ValueError(f"Missing required inputs: {', '.join(missing)}")
+
+    if args.course_config:
+        config = AppConfig(
+            bot_token=args.bot_token,
+            roster_path=None,
+            target_date=None,
+            timezone_name=None,
+            report_format=args.format,
+            debug_matching=args.debug_matching,
+            course_config_path=args.course_config,
+        )
+        return config
+
+    missing = [
+        name
+        for name, value in (
             ("--roster or ROSTER_FILE", args.roster),
             ("--target-date or TARGET_DATE", args.target_date),
             ("--timezone or COURSE_TIMEZONE", args.timezone),
-            ("--bot-token or DISCORD_BOT_TOKEN", args.bot_token),
         )
         if not value
     ]
@@ -93,6 +121,7 @@ def parse_args(argv: list[str] | None = None) -> AppConfig:
         timezone_name=args.timezone,
         report_format=args.format,
         debug_matching=args.debug_matching,
+        course_config_path=None,
         thread_id=args.thread_id,
         team_name=args.team_name,
         team_config_path=args.team_config,
@@ -105,6 +134,28 @@ def parse_args(argv: list[str] | None = None) -> AppConfig:
 def main(argv: list[str] | None = None) -> int:
     try:
         config = parse_args(argv)
+        if config.course_config_path:
+            if config.debug_matching:
+                print(
+                    "Debug matching currently applies only to legacy single-team mode.",
+                    file=sys.stderr,
+                )
+            course_config = load_course_config(config.course_config_path)
+            client = DiscordClient(config.bot_token)
+            aggregate_report = build_course_attendance_report(
+                course_config=course_config,
+                fetch_thread_messages=client.fetch_thread_messages,
+            )
+            renderer = (
+                render_json_course_report
+                if config.report_format == "json"
+                else render_text_course_report
+            )
+            print(renderer(aggregate_report))
+            return 0
+
+        if config.roster_path is None or config.target_date is None:
+            raise ValueError("Legacy mode requires roster and target date inputs.")
         team = load_team(config.roster_path)
         if config.team_name and team.team_name != config.team_name:
             raise ValueError(

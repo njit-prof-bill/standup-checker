@@ -1,6 +1,6 @@
 # standup-checker
 
-Phase 1 reads messages from a single Discord standup thread and produces a dry-run attendance report for one date.
+Phase 1 can either read a single Discord standup thread for one date or process a canonical course config covering multiple teams and dates.
 
 ## Scope
 
@@ -31,7 +31,7 @@ Phase 1 assumes each team has an explicit Discord thread ID for its standup thre
 
 ## Inputs
 
-Required inputs can be provided as CLI flags or environment variables:
+Legacy single-team mode inputs can be provided as CLI flags or environment variables:
 
 - `DISCORD_BOT_TOKEN`
 - `ROSTER_FILE`
@@ -88,6 +88,30 @@ Team config format:
 }
 ```
 
+Canonical course config format:
+
+```json
+{
+  "course": "CS 490",
+  "term": "Summer 2026",
+  "timezone": "America/New_York",
+  "dates": ["2026-06-13", "2026-06-14"],
+  "teams": [
+    {
+      "team_name": "team-alpha",
+      "thread_id": "123456789012345678",
+      "students": [
+        {
+          "student_id": "s1",
+          "student_name": "Alice Student",
+          "discord_user_id": "alice"
+        }
+      ]
+    }
+  ]
+}
+```
+
 ## Usage
 
 Install in editable mode:
@@ -123,7 +147,7 @@ For a first live test:
 3. Either provide a known standup `--thread-id` directly or update `examples/team-config.example.json`.
 4. Pick a date that already has known check-ins and run with `--format json` first so unmatched users are easy to inspect.
 
-Run a dry-run attendance check:
+Run a dry-run attendance check in legacy single-team mode:
 
 ```bash
 standup-checker \
@@ -146,7 +170,18 @@ standup-checker \
   --format text
 ```
 
-Use `--format json` for machine-readable output.
+Run a dry-run attendance check in canonical course-config mode:
+
+```bash
+standup-checker \
+  --course-config examples/course-config.example.json \
+  --bot-token "$DISCORD_BOT_TOKEN" \
+  --format text
+```
+
+Use `--format json` for machine-readable output in either mode.
+
+`--debug-matching` currently applies only to legacy single-team mode.
 
 ## Testing
 
