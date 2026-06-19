@@ -3,7 +3,9 @@
   "term": "Summer 2026",
   "timezone": "America/New_York",
   "dates": [
-    "2026-06-12"
+    "2026-06-03",
+    "2026-06-04",
+    "2026-06-05"
   ],
   "teams": [
     {
@@ -13,8 +15,56 @@
         {
           "student_id": "Ramirezzz1",
           "student_name": "Ramirez, Ronald Esgardo",
-          "discord_user_id": "ronald",
+          "discord_user_id": "ronald_40402",
           "discord_display_name": "Ronald"
+        },
+        {
+          "student_id": "er355-rey",
+          "student_name": "Reyes, Esmeralda",
+          "discord_user_id": "esmeralda092333",
+          "discord_display_name": "Esmeralda"
+        },
+        {
+          "student_id": "Brittney S",
+          "student_name": "Solarte, Brittney Elizabeth",
+          "discord_user_id": "brittlit",
+          "discord_display_name": "Ronald"
+        },
+        {
+          "student_id": "sergioT05",
+          "student_name": "Tapia, Sergio",
+          "discord_user_id": "pinkie_405",
+          "discord_display_name": "Sergio T"
+        }
+      ]
+    },
+    {
+      "team_name": "MergeSurvivors",
+      "thread_id": "1509994199632576643",
+      "students": [
+        {
+          "student_id": "ElvisValcarcel",
+          "student_name": "Valcarcel, Elvis N",
+          "discord_user_id": "elvis.val",
+          "discord_display_name": "Elvis"
+        },
+        {
+          "student_id": "ak2755-2025",
+          "student_name": "Kim, Andrew",
+          "discord_user_id": "ndrewk",
+          "discord_display_name": "andrew"
+        },
+        {
+          "student_id": "khush367",
+          "student_name": "Patel, Khush Nimish",
+          "discord_user_id": "kuzshz",
+          "discord_display_name": "Khush"
+        },
+        {
+          "student_id": "Emersonp7",
+          "student_name": "Perez, Emerson Osmany",
+          "discord_user_id": "perez7",
+          "discord_display_name": "Perez"
         }
       ]
     }

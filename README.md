@@ -2,6 +2,8 @@
 
 Phase 1 can either read a single Discord standup thread for one date or process a canonical course config covering multiple teams and dates.
 
+Legacy single-team inputs are internally adapted into the canonical `course-config` model, so both modes now share the same orchestration path while preserving the existing legacy CLI flags and single-report output.
+
 ## Scope
 
 Implemented:
@@ -181,7 +183,7 @@ standup-checker \
 
 Use `--format json` for machine-readable output in either mode.
 
-`--debug-matching` currently applies only to legacy single-team mode.
+`--debug-matching` applies only to legacy single-team mode. In canonical `--course-config` mode, the CLI prints a clear reminder that debug matching is legacy-only and continues normally.
 
 ## Testing
 
