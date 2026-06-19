@@ -11,7 +11,11 @@ from standup_checker.models import (
     StandupMessage,
     Student,
 )
-from standup_checker.reporting import render_json_course_report, render_text_course_report
+from standup_checker.reporting import (
+    render_csv_course_report,
+    render_json_course_report,
+    render_text_course_report,
+)
 
 
 class CourseAttendanceReportingTests(unittest.TestCase):
@@ -169,6 +173,64 @@ class CourseAttendanceReportingTests(unittest.TestCase):
         self.assertIn("- Alice (s1): absent", text)
         self.assertIn("intruder [m2] Daily standup update", text)
         self.assertIn("Unmatched Messages:\n- none", text)
+
+    def test_render_csv_course_report_builds_student_date_matrix_sorted_by_name(self) -> None:
+        aggregate = CourseAttendanceReport(
+            course="CS 490",
+            term="Summer 2026",
+            timezone="America/New_York",
+            reports=[
+                self._attendance_report(
+                    team_name="team-b",
+                    thread_id="thread-b",
+                    target_date=date(2026, 6, 14),
+                    records=[self._record("s2", "Bob", "team-b", present=False)],
+                    unmatched_messages=[],
+                ),
+                self._attendance_report(
+                    team_name="team-a",
+                    thread_id="thread-a",
+                    target_date=date(2026, 6, 13),
+                    records=[
+                        self._record("s1", "Alice", "team-a", present=True),
+                        self._record("s3", "Charlie", "team-a", present=False),
+                    ],
+                    unmatched_messages=[],
+                ),
+                self._attendance_report(
+                    team_name="team-a",
+                    thread_id="thread-a",
+                    target_date=date(2026, 6, 14),
+                    records=[
+                        self._record("s1", "Alice", "team-a", present=False),
+                        self._record("s3", "Charlie", "team-a", present=True),
+                    ],
+                    unmatched_messages=[],
+                ),
+                self._attendance_report(
+                    team_name="team-b",
+                    thread_id="thread-b",
+                    target_date=date(2026, 6, 13),
+                    records=[self._record("s2", "Bob", "team-b", present=True)],
+                    unmatched_messages=[],
+                ),
+            ],
+        )
+
+        csv_text = render_csv_course_report(aggregate)
+
+        self.assertEqual(
+            csv_text,
+            "\n".join(
+                [
+                    "student_name,student_id,team,2026-06-13,2026-06-14",
+                    "Alice,s1,team-a,1,0",
+                    "Bob,s2,team-b,1,0",
+                    "Charlie,s3,team-a,0,1",
+                    "",
+                ]
+            ),
+        )
 
     def _attendance_report(
         self,

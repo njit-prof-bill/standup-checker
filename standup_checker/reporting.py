@@ -1,7 +1,9 @@
 from __future__ import annotations
 
+import csv
 import json
 from collections import defaultdict
+from io import StringIO
 
 from standup_checker.models import AttendanceReport, CourseAttendanceReport
 
@@ -132,6 +134,46 @@ def render_json_course_report(report: CourseAttendanceReport) -> str:
         ],
     }
     return json.dumps(payload, indent=2)
+
+
+def render_csv_course_report(report: CourseAttendanceReport) -> str:
+    dates = sorted({item.target_date for item in report.reports})
+    attendance_by_student: dict[tuple[str, str, str], dict] = {}
+
+    for team_report in report.reports:
+        for record in team_report.records:
+            key = (
+                record.student.student_name,
+                record.student.student_id,
+                record.student.team_name,
+            )
+            student_row = attendance_by_student.setdefault(
+                key,
+                {
+                    "student_name": record.student.student_name,
+                    "student_id": record.student.student_id,
+                    "team": record.student.team_name,
+                    "attendance": {},
+                },
+            )
+            student_row["attendance"][team_report.target_date] = 1 if record.present else 0
+
+    output = StringIO()
+    writer = csv.writer(output, lineterminator="\n")
+    writer.writerow(["student_name", "student_id", "team", *[item.isoformat() for item in dates]])
+
+    for key in sorted(attendance_by_student, key=lambda item: item[0]):
+        row = attendance_by_student[key]
+        writer.writerow(
+            [
+                row["student_name"],
+                row["student_id"],
+                row["team"],
+                *[row["attendance"].get(item, 0) for item in dates],
+            ]
+        )
+
+    return output.getvalue()
 
 
 def _attendance_report_payload(report: AttendanceReport) -> dict:

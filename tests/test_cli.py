@@ -524,6 +524,104 @@ class CliTests(unittest.TestCase):
         self.assertEqual(payload["teams"][0]["reports"][0]["target_date"], "2026-06-13")
         self.assertTrue(payload["teams"][0]["reports"][0]["records"][0]["present"])
 
+    def test_course_config_csv_output_works(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            course_config_path = Path(temp_dir) / "course-config.json"
+            course_config_path.write_text(
+                json.dumps(
+                    {
+                        "course": "CS 490",
+                        "term": "Summer 2026",
+                        "timezone": "America/New_York",
+                        "dates": ["2026-06-13", "2026-06-14"],
+                        "teams": [
+                            {
+                                "team_name": "team-a",
+                                "thread_id": "thread-a",
+                                "students": [
+                                    {
+                                        "student_id": "s1",
+                                        "student_name": "Alice",
+                                        "discord_user_id": "alice",
+                                    }
+                                ],
+                            },
+                            {
+                                "team_name": "team-b",
+                                "thread_id": "thread-b",
+                                "students": [
+                                    {
+                                        "student_id": "s2",
+                                        "student_name": "Bob",
+                                        "discord_user_id": "bob",
+                                    }
+                                ],
+                            },
+                        ],
+                    }
+                ),
+                encoding="utf-8",
+            )
+
+            class FakeClient:
+                def __init__(self, bot_token: str) -> None:
+                    self.bot_token = bot_token
+
+                def fetch_thread_messages(self, thread_id: str, start_at, end_at, debug_stats=None):
+                    del end_at, debug_stats
+                    if thread_id == "thread-a" and start_at == datetime(2026, 6, 13, 4, 0, tzinfo=timezone.utc):
+                        return [
+                            StandupMessage(
+                                message_id="m1",
+                                author_id="100",
+                                author_username="alice",
+                                created_at=datetime(2026, 6, 13, 13, 0, tzinfo=timezone.utc),
+                                content="Daily standup",
+                                thread_id=thread_id,
+                            )
+                        ]
+                    if thread_id == "thread-b" and start_at == datetime(2026, 6, 14, 4, 0, tzinfo=timezone.utc):
+                        return [
+                            StandupMessage(
+                                message_id="m2",
+                                author_id="101",
+                                author_username="bob",
+                                created_at=datetime(2026, 6, 14, 13, 0, tzinfo=timezone.utc),
+                                content="Daily standup",
+                                thread_id=thread_id,
+                            )
+                        ]
+                    return []
+
+            stdout = io.StringIO()
+            with patch.object(cli, "DiscordClient", FakeClient):
+                with redirect_stdout(stdout):
+                    exit_code = cli.main(
+                        [
+                            "--course-config",
+                            str(course_config_path),
+                            "--bot-token",
+                            "token",
+                            "--format",
+                            "csv",
+                        ]
+                    )
+
+        self.assertEqual(exit_code, 0)
+        self.assertEqual(
+            stdout.getvalue(),
+            (
+                "\n".join(
+                    [
+                        "student_name,student_id,team,2026-06-13,2026-06-14",
+                        "Alice,s1,team-a,1,0",
+                        "Bob,s2,team-b,0,1",
+                    ]
+                )
+                + "\n"
+            ),
+        )
+
     def test_legacy_mode_routes_through_legacy_adapter_and_shared_pipeline(self) -> None:
         captured: dict[str, object] = {}
 

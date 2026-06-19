@@ -21,6 +21,7 @@ from standup_checker.models import (
 )
 from standup_checker.orchestration import build_course_attendance_report
 from standup_checker.reporting import (
+    render_csv_course_report,
     render_json_course_report,
     render_json_report,
     render_text_course_report,
@@ -52,7 +53,7 @@ def build_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument(
         "--format",
-        choices=("text", "json"),
+        choices=("text", "json", "csv"),
         default="text",
         help="Report output format",
     )
@@ -186,7 +187,7 @@ def main(argv: list[str] | None = None) -> int:
                 ),
                 file=sys.stderr,
             )
-        print(render_output(aggregate_report=aggregate_report, report_format=config.report_format))
+        _write_output(render_output(aggregate_report=aggregate_report, report_format=config.report_format))
         return 0
     except Exception as exc:
         print(f"Error: {exc}", file=sys.stderr)
@@ -206,6 +207,11 @@ def _build_fetcher(client: DiscordClient, fetch_stats: MessageFetchStats | None)
 
 
 def render_output(*, aggregate_report: CourseAttendanceReport, report_format: str) -> str:
+    if report_format == "csv":
+        if _is_legacy_compat_report(aggregate_report):
+            raise ValueError("CSV output requires --course-config.")
+        return render_csv_course_report(aggregate_report)
+
     if _is_legacy_compat_report(aggregate_report):
         report = _extract_legacy_report(aggregate_report)
         renderer = render_json_report if report_format == "json" else render_text_report
@@ -213,6 +219,13 @@ def render_output(*, aggregate_report: CourseAttendanceReport, report_format: st
 
     renderer = render_json_course_report if report_format == "json" else render_text_course_report
     return renderer(aggregate_report)
+
+
+def _write_output(output: str) -> None:
+    if output.endswith("\n"):
+        sys.stdout.write(output)
+        return
+    sys.stdout.write(f"{output}\n")
 
 
 def _is_legacy_compat_report(report: CourseAttendanceReport) -> bool:

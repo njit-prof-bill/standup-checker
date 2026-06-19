@@ -10,7 +10,7 @@ Implemented:
 
 - read-only Discord thread message retrieval
 - roster-based attendance matching
-- dry-run attendance reporting in text or JSON
+- dry-run attendance reporting in text, JSON, or CSV
 
 Not implemented:
 
@@ -181,7 +181,16 @@ standup-checker \
   --format text
 ```
 
-Use `--format json` for machine-readable output in either mode.
+Generate a CSV attendance matrix for manual grading review:
+
+```bash
+standup-checker \
+  --course-config examples/course-config.example.json \
+  --bot-token "$DISCORD_BOT_TOKEN" \
+  --format csv
+```
+
+Use `--format json` for machine-readable output in either mode. Use `--format csv` with `--course-config` to generate a student-by-date attendance matrix where cells are `1` for present and `0` for absent.
 
 `--debug-matching` applies only to legacy single-team mode. In canonical `--course-config` mode, the CLI prints a clear reminder that debug matching is legacy-only and continues normally.
 
