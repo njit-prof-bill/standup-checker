@@ -34,17 +34,20 @@ except ImportError:
 @dataclass(frozen=True)
 class AppConfig:
     bot_token: str
-    roster_path: str
-    target_date: date
-    timezone_name: str
+    roster_path: str | None
+    target_date: date | None
+    timezone_name: str | None
     report_format: str
     debug_matching: bool = False
+    course_config_path: str | None = None
     thread_id: str | None = None
     team_name: str | None = None
     team_config_path: str | None = None
 
     @property
     def timezone(self) -> ZoneInfo:
+        if self.timezone_name is None:
+            raise ValueError("Timezone is not configured.")
         try:
             return ZoneInfo(self.timezone_name)
         except ZoneInfoNotFoundError as exc:

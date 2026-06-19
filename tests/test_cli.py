@@ -1,17 +1,18 @@
 from __future__ import annotations
 
 import json
-from datetime import datetime, timezone
 import io
 import os
 import tempfile
 import unittest
 from contextlib import redirect_stderr, redirect_stdout
+from datetime import date, datetime, timezone
 from pathlib import Path
 from unittest.mock import patch
 
 from standup_checker import cli
-from standup_checker.models import StandupMessage
+from standup_checker.legacy_config_adapter import LEGACY_COMPAT_COURSE, LEGACY_COMPAT_TERM
+from standup_checker.models import CourseConfig, CourseTeam, StandupMessage, Student
 
 
 class CliTests(unittest.TestCase):
@@ -317,6 +318,446 @@ class CliTests(unittest.TestCase):
         self.assertEqual(exit_code, 0)
         self.assertEqual(payload["thread_id"], "thread-from-config")
         self.assertEqual(payload["team_name"], "team-1")
+
+    def test_legacy_mode_still_works(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            roster_path = Path(temp_dir) / "roster.json"
+            roster_path.write_text(
+                json.dumps(
+                    {
+                        "students": [
+                            {
+                                "student_id": "s1",
+                                "student_name": "Alice",
+                                "team_name": "team-1",
+                                "discord_user_id": "alice",
+                            }
+                        ]
+                    }
+                ),
+                encoding="utf-8",
+            )
+
+            class FakeClient:
+                def __init__(self, bot_token: str) -> None:
+                    self.bot_token = bot_token
+
+                def fetch_thread_messages(self, thread_id: str, start_at, end_at, debug_stats=None):
+                    return [
+                        StandupMessage(
+                            message_id="m1",
+                            author_id="100",
+                            author_username="alice",
+                            created_at=datetime(2026, 6, 13, 13, 0, tzinfo=timezone.utc),
+                            content="Daily standup",
+                            thread_id=thread_id,
+                        )
+                    ]
+
+            stdout = io.StringIO()
+            with patch.object(cli, "DiscordClient", FakeClient):
+                with redirect_stdout(stdout):
+                    exit_code = cli.main(
+                        [
+                            "--roster",
+                            str(roster_path),
+                            "--thread-id",
+                            "thread-1",
+                            "--target-date",
+                            "2026-06-13",
+                            "--timezone",
+                            "America/New_York",
+                            "--bot-token",
+                            "token",
+                            "--format",
+                            "text",
+                        ]
+                    )
+
+        self.assertEqual(exit_code, 0)
+        self.assertIn("Attendance Report: 2026-06-13", stdout.getvalue())
+        self.assertIn("Team: team-1", stdout.getvalue())
+
+    def test_course_config_mode_works(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            course_config_path = Path(temp_dir) / "course-config.json"
+            course_config_path.write_text(
+                json.dumps(
+                    {
+                        "course": "CS 490",
+                        "term": "Summer 2026",
+                        "timezone": "America/New_York",
+                        "dates": ["2026-06-13", "2026-06-14"],
+                        "teams": [
+                            {
+                                "team_name": "team-1",
+                                "thread_id": "thread-1",
+                                "students": [
+                                    {
+                                        "student_id": "s1",
+                                        "student_name": "Alice",
+                                        "discord_user_id": "alice",
+                                    }
+                                ],
+                            },
+                            {
+                                "team_name": "team-2",
+                                "thread_id": "thread-2",
+                                "students": [
+                                    {
+                                        "student_id": "s2",
+                                        "student_name": "Bob",
+                                        "discord_user_id": "bob",
+                                    }
+                                ],
+                            },
+                        ],
+                    }
+                ),
+                encoding="utf-8",
+            )
+
+            class FakeClient:
+                def __init__(self, bot_token: str) -> None:
+                    self.bot_token = bot_token
+
+                def fetch_thread_messages(self, thread_id: str, start_at, end_at, debug_stats=None):
+                    del start_at, end_at, debug_stats
+                    if thread_id == "thread-1":
+                        return [
+                            StandupMessage(
+                                message_id="m1",
+                                author_id="100",
+                                author_username="alice",
+                                created_at=datetime(2026, 6, 13, 13, 0, tzinfo=timezone.utc),
+                                content="Daily standup",
+                                thread_id=thread_id,
+                            )
+                        ]
+                    return []
+
+            stdout = io.StringIO()
+            with patch.object(cli, "DiscordClient", FakeClient):
+                with redirect_stdout(stdout):
+                    exit_code = cli.main(
+                        [
+                            "--course-config",
+                            str(course_config_path),
+                            "--bot-token",
+                            "token",
+                            "--format",
+                            "text",
+                        ]
+                    )
+
+        self.assertEqual(exit_code, 0)
+        self.assertIn("Course Attendance Report: CS 490", stdout.getvalue())
+        self.assertIn("Team: team-1", stdout.getvalue())
+        self.assertIn("Team: team-2", stdout.getvalue())
+        self.assertIn("Date: 2026-06-13", stdout.getvalue())
+        self.assertIn("Date: 2026-06-14", stdout.getvalue())
+
+    def test_course_config_json_output_works(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            course_config_path = Path(temp_dir) / "course-config.json"
+            course_config_path.write_text(
+                json.dumps(
+                    {
+                        "course": "CS 490",
+                        "term": "Summer 2026",
+                        "timezone": "America/New_York",
+                        "dates": ["2026-06-13"],
+                        "teams": [
+                            {
+                                "team_name": "team-1",
+                                "thread_id": "thread-1",
+                                "students": [
+                                    {
+                                        "student_id": "s1",
+                                        "student_name": "Alice",
+                                        "discord_user_id": "alice",
+                                    }
+                                ],
+                            }
+                        ],
+                    }
+                ),
+                encoding="utf-8",
+            )
+
+            class FakeClient:
+                def __init__(self, bot_token: str) -> None:
+                    self.bot_token = bot_token
+
+                def fetch_thread_messages(self, thread_id: str, start_at, end_at, debug_stats=None):
+                    del start_at, end_at, debug_stats
+                    return [
+                        StandupMessage(
+                            message_id="m1",
+                            author_id="100",
+                            author_username="alice",
+                            created_at=datetime(2026, 6, 13, 13, 0, tzinfo=timezone.utc),
+                            content="Daily standup",
+                            thread_id=thread_id,
+                        )
+                    ]
+
+            stdout = io.StringIO()
+            with patch.object(cli, "DiscordClient", FakeClient):
+                with redirect_stdout(stdout):
+                    exit_code = cli.main(
+                        [
+                            "--course-config",
+                            str(course_config_path),
+                            "--bot-token",
+                            "token",
+                            "--format",
+                            "json",
+                        ]
+                    )
+
+        payload = json.loads(stdout.getvalue())
+        self.assertEqual(exit_code, 0)
+        self.assertEqual(payload["course"], "CS 490")
+        self.assertEqual(payload["summary"]["team_count"], 1)
+        self.assertEqual(payload["teams"][0]["team_name"], "team-1")
+        self.assertEqual(payload["teams"][0]["reports"][0]["target_date"], "2026-06-13")
+        self.assertTrue(payload["teams"][0]["reports"][0]["records"][0]["present"])
+
+    def test_course_config_csv_output_works(self) -> None:
+        with tempfile.TemporaryDirectory() as temp_dir:
+            course_config_path = Path(temp_dir) / "course-config.json"
+            course_config_path.write_text(
+                json.dumps(
+                    {
+                        "course": "CS 490",
+                        "term": "Summer 2026",
+                        "timezone": "America/New_York",
+                        "dates": ["2026-06-13", "2026-06-14"],
+                        "teams": [
+                            {
+                                "team_name": "team-a",
+                                "thread_id": "thread-a",
+                                "students": [
+                                    {
+                                        "student_id": "s1",
+                                        "student_name": "Alice",
+                                        "discord_user_id": "alice",
+                                    }
+                                ],
+                            },
+                            {
+                                "team_name": "team-b",
+                                "thread_id": "thread-b",
+                                "students": [
+                                    {
+                                        "student_id": "s2",
+                                        "student_name": "Bob",
+                                        "discord_user_id": "bob",
+                                    }
+                                ],
+                            },
+                        ],
+                    }
+                ),
+                encoding="utf-8",
+            )
+
+            class FakeClient:
+                def __init__(self, bot_token: str) -> None:
+                    self.bot_token = bot_token
+
+                def fetch_thread_messages(self, thread_id: str, start_at, end_at, debug_stats=None):
+                    del end_at, debug_stats
+                    if thread_id == "thread-a" and start_at == datetime(2026, 6, 13, 4, 0, tzinfo=timezone.utc):
+                        return [
+                            StandupMessage(
+                                message_id="m1",
+                                author_id="100",
+                                author_username="alice",
+                                created_at=datetime(2026, 6, 13, 13, 0, tzinfo=timezone.utc),
+                                content="Daily standup",
+                                thread_id=thread_id,
+                            )
+                        ]
+                    if thread_id == "thread-b" and start_at == datetime(2026, 6, 14, 4, 0, tzinfo=timezone.utc):
+                        return [
+                            StandupMessage(
+                                message_id="m2",
+                                author_id="101",
+                                author_username="bob",
+                                created_at=datetime(2026, 6, 14, 13, 0, tzinfo=timezone.utc),
+                                content="Daily standup",
+                                thread_id=thread_id,
+                            )
+                        ]
+                    return []
+
+            stdout = io.StringIO()
+            with patch.object(cli, "DiscordClient", FakeClient):
+                with redirect_stdout(stdout):
+                    exit_code = cli.main(
+                        [
+                            "--course-config",
+                            str(course_config_path),
+                            "--bot-token",
+                            "token",
+                            "--format",
+                            "csv",
+                        ]
+                    )
+
+        self.assertEqual(exit_code, 0)
+        self.assertEqual(
+            stdout.getvalue(),
+            (
+                "\n".join(
+                    [
+                        "student_name,student_id,team,2026-06-13,2026-06-14",
+                        "Alice,s1,team-a,1,0",
+                        "Bob,s2,team-b,0,1",
+                    ]
+                )
+                + "\n"
+            ),
+        )
+
+    def test_legacy_mode_routes_through_legacy_adapter_and_shared_pipeline(self) -> None:
+        captured: dict[str, object] = {}
+
+        def fake_adapt_legacy_inputs_to_course_config(**kwargs) -> CourseConfig:
+            captured["adapter_kwargs"] = kwargs
+            return CourseConfig(
+                course=LEGACY_COMPAT_COURSE,
+                term=LEGACY_COMPAT_TERM,
+                timezone="America/New_York",
+                dates=[date(2026, 6, 13)],
+                teams=[
+                    CourseTeam(
+                        team_name="team-1",
+                        thread_id="thread-1",
+                        students=[self._student("s1", "Alice", "team-1", "alice")],
+                    )
+                ],
+            )
+
+        class FakeClient:
+            def __init__(self, bot_token: str) -> None:
+                self.bot_token = bot_token
+
+            def fetch_thread_messages(self, thread_id: str, start_at, end_at, debug_stats=None):
+                captured["fetch_call"] = (thread_id, start_at, end_at, debug_stats is not None)
+                return [
+                    StandupMessage(
+                        message_id="m1",
+                        author_id="100",
+                        author_username="alice",
+                        created_at=datetime(2026, 6, 13, 13, 0, tzinfo=timezone.utc),
+                        content="Daily standup",
+                        thread_id=thread_id,
+                    )
+                ]
+
+        stdout = io.StringIO()
+        with patch.object(cli, "adapt_legacy_inputs_to_course_config", fake_adapt_legacy_inputs_to_course_config):
+            with patch.object(cli, "DiscordClient", FakeClient):
+                with redirect_stdout(stdout):
+                    exit_code = cli.main(
+                        [
+                            "--roster",
+                            "roster.json",
+                            "--thread-id",
+                            "thread-1",
+                            "--target-date",
+                            "2026-06-13",
+                            "--timezone",
+                            "America/New_York",
+                            "--bot-token",
+                            "token",
+                            "--format",
+                            "json",
+                        ]
+                    )
+
+        payload = json.loads(stdout.getvalue())
+        self.assertEqual(exit_code, 0)
+        self.assertEqual(captured["adapter_kwargs"]["roster_path"], "roster.json")
+        self.assertEqual(captured["adapter_kwargs"]["thread_id"], "thread-1")
+        self.assertEqual(captured["fetch_call"][0], "thread-1")
+        self.assertEqual(payload["team_name"], "team-1")
+        self.assertTrue(payload["records"][0]["present"])
+
+    def test_course_config_mode_routes_through_loader_and_shared_pipeline(self) -> None:
+        captured: dict[str, object] = {}
+
+        def fake_load_course_config(path: str) -> CourseConfig:
+            captured["loaded_path"] = path
+            return CourseConfig(
+                course="CS 490",
+                term="Summer 2026",
+                timezone="America/New_York",
+                dates=[date(2026, 6, 13)],
+                teams=[
+                    CourseTeam(
+                        team_name="team-1",
+                        thread_id="thread-1",
+                        students=[self._student("s1", "Alice", "team-1", "alice")],
+                    )
+                ],
+            )
+
+        class FakeClient:
+            def __init__(self, bot_token: str) -> None:
+                self.bot_token = bot_token
+
+            def fetch_thread_messages(self, thread_id: str, start_at, end_at, debug_stats=None):
+                captured["fetch_call"] = (thread_id, start_at, end_at, debug_stats is not None)
+                return [
+                    StandupMessage(
+                        message_id="m1",
+                        author_id="100",
+                        author_username="alice",
+                        created_at=datetime(2026, 6, 13, 13, 0, tzinfo=timezone.utc),
+                        content="Daily standup",
+                        thread_id=thread_id,
+                    )
+                ]
+
+        stdout = io.StringIO()
+        with patch.object(cli, "load_course_config", fake_load_course_config):
+            with patch.object(cli, "DiscordClient", FakeClient):
+                with redirect_stdout(stdout):
+                    exit_code = cli.main(
+                        [
+                            "--course-config",
+                            "course-config.json",
+                            "--bot-token",
+                            "token",
+                            "--format",
+                            "json",
+                        ]
+                    )
+
+        payload = json.loads(stdout.getvalue())
+        self.assertEqual(exit_code, 0)
+        self.assertEqual(captured["loaded_path"], "course-config.json")
+        self.assertEqual(captured["fetch_call"][0], "thread-1")
+        self.assertEqual(payload["course"], "CS 490")
+        self.assertEqual(payload["teams"][0]["team_name"], "team-1")
+
+    def _student(
+        self,
+        student_id: str,
+        student_name: str,
+        team_name: str,
+        discord_user_id: str,
+    ) -> Student:
+        return Student(
+            student_id=student_id,
+            student_name=student_name,
+            team_name=team_name,
+            discord_user_id=discord_user_id,
+        )
 
 
 if __name__ == "__main__":

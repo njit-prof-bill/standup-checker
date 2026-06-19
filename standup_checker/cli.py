@@ -5,18 +5,35 @@ import sys
 from collections import Counter
 from datetime import date, datetime, time, timedelta, timezone
 
-from standup_checker.attendance import build_attendance_report
 from standup_checker.config import AppConfig, get_env, load_project_dotenv
 from standup_checker.discord_api import DiscordClient
-from standup_checker.models import AttendanceReport, MessageFetchStats, StandupMessage, Team
-from standup_checker.reporting import render_json_report, render_text_report
-from standup_checker.roster import load_team
-from standup_checker.team_config import resolve_thread_id
+from standup_checker.legacy_config_adapter import (
+    LEGACY_COMPAT_COURSE,
+    LEGACY_COMPAT_TERM,
+    adapt_legacy_inputs_to_course_config,
+)
+from standup_checker.models import (
+    AttendanceReport,
+    CourseAttendanceReport,
+    MessageFetchStats,
+    StandupMessage,
+    Team,
+)
+from standup_checker.orchestration import build_course_attendance_report
+from standup_checker.reporting import (
+    render_csv_course_report,
+    render_json_course_report,
+    render_json_report,
+    render_text_course_report,
+    render_text_report,
+)
+from standup_checker.roster import load_course_config
 
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="Dry-run Discord standup attendance checker")
     parser.add_argument("--roster", default=get_env("ROSTER_FILE"), help="Path to roster JSON")
+    parser.add_argument("--course-config", help="Path to canonical course config JSON")
     parser.add_argument("--thread-id", default=get_env("DISCORD_THREAD_ID"), help="Discord thread ID")
     parser.add_argument("--team-name", default=get_env("TEAM_NAME"), help="Team name")
     parser.add_argument(
@@ -36,7 +53,7 @@ def build_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument(
         "--format",
-        choices=("text", "json"),
+        choices=("text", "json", "csv"),
         default="text",
         help="Report output format",
     )
@@ -60,10 +77,31 @@ def parse_args(argv: list[str] | None = None) -> AppConfig:
     missing = [
         name
         for name, value in (
+            ("--bot-token or DISCORD_BOT_TOKEN", args.bot_token),
+        )
+        if not value
+    ]
+    if missing:
+        raise ValueError(f"Missing required inputs: {', '.join(missing)}")
+
+    if args.course_config:
+        config = AppConfig(
+            bot_token=args.bot_token,
+            roster_path=None,
+            target_date=None,
+            timezone_name=None,
+            report_format=args.format,
+            debug_matching=args.debug_matching,
+            course_config_path=args.course_config,
+        )
+        return config
+
+    missing = [
+        name
+        for name, value in (
             ("--roster or ROSTER_FILE", args.roster),
             ("--target-date or TARGET_DATE", args.target_date),
             ("--timezone or COURSE_TIMEZONE", args.timezone),
-            ("--bot-token or DISCORD_BOT_TOKEN", args.bot_token),
         )
         if not value
     ]
@@ -93,6 +131,7 @@ def parse_args(argv: list[str] | None = None) -> AppConfig:
         timezone_name=args.timezone,
         report_format=args.format,
         debug_matching=args.debug_matching,
+        course_config_path=None,
         thread_id=args.thread_id,
         team_name=args.team_name,
         team_config_path=args.team_config,
@@ -105,55 +144,135 @@ def parse_args(argv: list[str] | None = None) -> AppConfig:
 def main(argv: list[str] | None = None) -> int:
     try:
         config = parse_args(argv)
-        team = load_team(config.roster_path)
-        if config.team_name and team.team_name != config.team_name:
-            raise ValueError(
-                f"Roster team '{team.team_name}' does not match requested team '{config.team_name}'."
-            )
-        thread_id = resolve_thread_id(
-            thread_id=config.thread_id,
-            team_name=config.team_name,
-            team_config_path=config.team_config_path,
-        )
-        course_timezone = config.timezone
-        start_local = datetime.combine(config.target_date, time.min, tzinfo=course_timezone)
-        end_local = start_local + timedelta(days=1)
         client = DiscordClient(config.bot_token)
-        fetch_stats = MessageFetchStats() if config.debug_matching else None
-        messages = client.fetch_thread_messages(
-            thread_id,
-            start_at=start_local.astimezone(timezone.utc),
-            end_at=end_local.astimezone(timezone.utc),
-            debug_stats=fetch_stats,
+        legacy_mode = config.course_config_path is None
+        fetch_stats = MessageFetchStats() if config.debug_matching and legacy_mode else None
+
+        if config.course_config_path:
+            if config.debug_matching:
+                print(
+                    "Debug matching currently applies only to legacy single-team mode.",
+                    file=sys.stderr,
+                )
+            course_config = load_course_config(config.course_config_path)
+        else:
+            if config.roster_path is None or config.target_date is None or config.timezone_name is None:
+                raise ValueError("Legacy mode requires roster, target date, and timezone inputs.")
+            course_config = adapt_legacy_inputs_to_course_config(
+                roster_path=config.roster_path,
+                thread_id=config.thread_id,
+                team_name=config.team_name,
+                team_config_path=config.team_config_path,
+                target_date=config.target_date,
+                timezone_name=config.timezone_name,
+            )
+
+        aggregate_report = build_course_attendance_report(
+            course_config=course_config,
+            fetch_thread_messages=_build_fetcher(client, fetch_stats),
         )
-        report = build_attendance_report(
-            team=team,
-            thread_id=thread_id,
-            target_date=config.target_date,
-            timezone=course_timezone,
-            messages=messages,
-        )
-        if config.debug_matching:
+        if fetch_stats is not None:
+            report = _extract_legacy_report(aggregate_report)
             print(
                 render_matching_debug(
-                    team=team,
-                    thread_id=thread_id,
-                    target_date=config.target_date,
-                    timezone_name=config.timezone_name,
-                    start_local=start_local,
-                    end_local=end_local,
-                    messages=messages,
+                    team=_legacy_team(report),
+                    thread_id=report.thread_id,
+                    target_date=report.target_date,
+                    timezone_name=report.timezone,
+                    start_local=_local_day_start(report),
+                    end_local=_local_day_end(report),
+                    messages=_legacy_messages(report),
                     report=report,
-                    fetch_stats=fetch_stats or MessageFetchStats(),
+                    fetch_stats=fetch_stats,
                 ),
                 file=sys.stderr,
             )
-        renderer = render_json_report if config.report_format == "json" else render_text_report
-        print(renderer(report))
+        _write_output(render_output(aggregate_report=aggregate_report, report_format=config.report_format))
         return 0
     except Exception as exc:
         print(f"Error: {exc}", file=sys.stderr)
         return 1
+
+
+def _build_fetcher(client: DiscordClient, fetch_stats: MessageFetchStats | None):
+    def fetch_thread_messages(thread_id: str, start_at: datetime, end_at: datetime) -> list[StandupMessage]:
+        return client.fetch_thread_messages(
+            thread_id,
+            start_at=start_at,
+            end_at=end_at,
+            debug_stats=fetch_stats,
+        )
+
+    return fetch_thread_messages
+
+
+def render_output(*, aggregate_report: CourseAttendanceReport, report_format: str) -> str:
+    if report_format == "csv":
+        if _is_legacy_compat_report(aggregate_report):
+            raise ValueError("CSV output requires --course-config.")
+        return render_csv_course_report(aggregate_report)
+
+    if _is_legacy_compat_report(aggregate_report):
+        report = _extract_legacy_report(aggregate_report)
+        renderer = render_json_report if report_format == "json" else render_text_report
+        return renderer(report)
+
+    renderer = render_json_course_report if report_format == "json" else render_text_course_report
+    return renderer(aggregate_report)
+
+
+def _write_output(output: str) -> None:
+    if output.endswith("\n"):
+        sys.stdout.write(output)
+        return
+    sys.stdout.write(f"{output}\n")
+
+
+def _is_legacy_compat_report(report: CourseAttendanceReport) -> bool:
+    return (
+        report.course == LEGACY_COMPAT_COURSE
+        and report.term == LEGACY_COMPAT_TERM
+        and len(report.reports) == 1
+    )
+
+
+def _extract_legacy_report(report: CourseAttendanceReport) -> AttendanceReport:
+    if not _is_legacy_compat_report(report):
+        raise ValueError("Expected a single-report legacy aggregate.")
+    return report.reports[0]
+
+
+def _legacy_team(report: AttendanceReport) -> Team:
+    return Team(
+        team_name=report.team_name,
+        students=[record.student for record in report.records],
+    )
+
+
+def _legacy_messages(report: AttendanceReport) -> list[StandupMessage]:
+    return [message for record in report.records for message in record.messages] + report.unmatched_messages
+
+
+def _local_day_start(report: AttendanceReport) -> datetime:
+    return datetime.combine(
+        report.target_date,
+        time.min,
+        tzinfo=_timezone_for_name(report.timezone),
+    )
+
+
+def _local_day_end(report: AttendanceReport) -> datetime:
+    return _local_day_start(report) + timedelta(days=1)
+
+
+def _timezone_for_name(timezone_name: str):
+    return AppConfig(
+        bot_token="unused",
+        roster_path=None,
+        target_date=None,
+        timezone_name=timezone_name,
+        report_format="text",
+    ).timezone
 
 
 def render_matching_debug(
