@@ -9,6 +9,42 @@
   ],
   "teams": [
     {
+      "team_name": "ClaudeScholars",
+      "thread_id": "1509993938088493086",
+      "students": [
+        {
+          "student_id": "chryscay",
+          "student_name": "Cayetano, Chrystian",
+          "discord_user_id": "chrys3819",
+          "discord_display_name": "chrys"
+        },
+        {
+          "student_id": "thetalhachoudhry",
+          "student_name": "Choudhry, Talha Mohammad",
+          "discord_user_id": "talha09466",
+          "discord_display_name": "Talha"
+        },
+        {
+          "student_id": "christophercuzco",
+          "student_name": "Cuzco, Christopher",
+          "discord_user_id": "ewes",
+          "discord_display_name": "chris"
+        },
+        {
+          "student_id": "shoyos16",
+          "student_name": "Hoyos, Santiago",
+          "discord_user_id": "BoogieWoogie16",
+          "discord_display_name": "BoogieWoogie16"
+        },
+        {
+          "student_id": "hammad-imtiaz",
+          "student_name": "Imtiaz, Hammad",
+          "discord_user_id": "hammad147",
+          "discord_display_name": "Hammad"
+        }
+      ]
+    },
+    {
       "team_name": "breeze",
       "thread_id": "1509994039754231828",
       "students": [
