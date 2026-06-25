@@ -103,6 +103,48 @@
           "discord_display_name": "Perez"
         }
       ]
+    },
+    {
+      "team_name": "TeamDragons",
+      "thread_id": "1509994280452886618",
+      "students": [
+        {
+          "student_id": "rc74A",
+          "student_name": "Cotzomi, Ricardo",
+          "discord_user_id": "ricardo.c_14215",
+          "discord_display_name": "Ricardo Cotzomi (rc74)"
+        },
+        {
+          "student_id": "Jakemuzy",
+          "student_name": "Muzyka, Jake Michael",
+          "discord_user_id": "jmuzy04",
+          "discord_display_name": "Jake"
+        },
+        {
+          "student_id": "romeror7",
+          "student_name": "Romero, Ruben Anthony",
+          "discord_user_id": "ant01414",
+          "discord_display_name": "Ruben Romero"
+        },
+        {
+          "student_id": "JasonT598",
+          "student_name": "Tailor, Jason",
+          "discord_user_id": "canadianjason",
+          "discord_display_name": "Jason"
+        },
+        {
+          "student_id": "Joel-Wwalker",
+          "student_name": "Walker, Joel Matthew",
+          "discord_user_id": "verspasian",
+          "discord_display_name": "Joel"
+        },
+        {
+          "student_id": "jware692",
+          "student_name": "Ware, Joshua",
+          "discord_user_id": "boopers.",
+          "discord_display_name": "Josh Ware"
+        }
+      ]
     }
   ]
 }
