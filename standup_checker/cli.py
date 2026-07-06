@@ -4,6 +4,7 @@ import argparse
 import sys
 from collections import Counter
 from datetime import date, datetime, time, timedelta, timezone
+from time import sleep as time_sleep
 
 from standup_checker.config import AppConfig, get_env, load_project_dotenv
 from standup_checker.discord_api import DiscordClient
@@ -58,9 +59,19 @@ def build_parser() -> argparse.ArgumentParser:
         help="Report output format",
     )
     parser.add_argument(
+        "--output-file",
+        help="Write report output to a file instead of stdout",
+    )
+    parser.add_argument(
         "--bot-token",
         default=get_env("DISCORD_BOT_TOKEN"),
         help="Discord bot token; defaults to DISCORD_BOT_TOKEN",
+    )
+    parser.add_argument(
+        "--discord-request-delay-seconds",
+        type=float,
+        default=1.0,
+        help="Seconds to wait between Discord thread/date fetches; defaults to 1.0 for safer pacing",
     )
     parser.add_argument(
         "--debug-matching",
@@ -84,6 +95,9 @@ def parse_args(argv: list[str] | None = None) -> AppConfig:
     if missing:
         raise ValueError(f"Missing required inputs: {', '.join(missing)}")
 
+    if args.discord_request_delay_seconds < 0:
+        raise ValueError("--discord-request-delay-seconds must be non-negative.")
+
     if args.course_config:
         config = AppConfig(
             bot_token=args.bot_token,
@@ -91,6 +105,8 @@ def parse_args(argv: list[str] | None = None) -> AppConfig:
             target_date=None,
             timezone_name=None,
             report_format=args.format,
+            output_path=args.output_file,
+            discord_request_delay_seconds=args.discord_request_delay_seconds,
             debug_matching=args.debug_matching,
             course_config_path=args.course_config,
         )
@@ -130,6 +146,8 @@ def parse_args(argv: list[str] | None = None) -> AppConfig:
         target_date=parsed_date,
         timezone_name=args.timezone,
         report_format=args.format,
+        output_path=args.output_file,
+        discord_request_delay_seconds=args.discord_request_delay_seconds,
         debug_matching=args.debug_matching,
         course_config_path=None,
         thread_id=args.thread_id,
@@ -170,6 +188,8 @@ def main(argv: list[str] | None = None) -> int:
         aggregate_report = build_course_attendance_report(
             course_config=course_config,
             fetch_thread_messages=_build_fetcher(client, fetch_stats),
+            request_delay_seconds=config.discord_request_delay_seconds,
+            sleep_fn=time_sleep,
         )
         if fetch_stats is not None:
             report = _extract_legacy_report(aggregate_report)
@@ -187,7 +207,10 @@ def main(argv: list[str] | None = None) -> int:
                 ),
                 file=sys.stderr,
             )
-        _write_output(render_output(aggregate_report=aggregate_report, report_format=config.report_format))
+        _write_output(
+            render_output(aggregate_report=aggregate_report, report_format=config.report_format),
+            output_path=config.output_path,
+        )
         return 0
     except Exception as exc:
         print(f"Error: {exc}", file=sys.stderr)
@@ -221,11 +244,13 @@ def render_output(*, aggregate_report: CourseAttendanceReport, report_format: st
     return renderer(aggregate_report)
 
 
-def _write_output(output: str) -> None:
-    if output.endswith("\n"):
-        sys.stdout.write(output)
+def _write_output(output: str, output_path: str | None = None) -> None:
+    final_output = output if output.endswith("\n") else f"{output}\n"
+    if output_path is not None:
+        with open(output_path, "w", encoding="utf-8") as handle:
+            handle.write(final_output)
         return
-    sys.stdout.write(f"{output}\n")
+    sys.stdout.write(final_output)
 
 
 def _is_legacy_compat_report(report: CourseAttendanceReport) -> bool:

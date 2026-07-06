@@ -38,6 +38,8 @@ class AppConfig:
     target_date: date | None
     timezone_name: str | None
     report_format: str
+    output_path: str | None = None
+    discord_request_delay_seconds: float = 1.0
     debug_matching: bool = False
     course_config_path: str | None = None
     thread_id: str | None = None

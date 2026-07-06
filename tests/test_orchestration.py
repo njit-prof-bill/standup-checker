@@ -69,6 +69,32 @@ class CourseAttendanceOrchestrationTests(unittest.TestCase):
             [(date(2026, 6, 13), True), (date(2026, 6, 14), False)],
         )
 
+    def test_request_pacing_sleeps_between_fetches_only(self) -> None:
+        config = self._course_config(
+            dates=[date(2026, 6, 13), date(2026, 6, 14)],
+            teams=[
+                self._course_team(
+                    team_name="team-1",
+                    thread_id="thread-1",
+                    students=[self._student("s1", "Alice", "team-1", "alice")],
+                )
+            ],
+        )
+        sleep_calls: list[float] = []
+
+        def fetch_thread_messages(thread_id: str, start_at: datetime, end_at: datetime) -> list[StandupMessage]:
+            del thread_id, start_at, end_at
+            return []
+
+        build_course_attendance_report(
+            course_config=config,
+            fetch_thread_messages=fetch_thread_messages,
+            request_delay_seconds=1.0,
+            sleep_fn=sleep_calls.append,
+        )
+
+        self.assertEqual(sleep_calls, [1.0])
+
     def test_multiple_teams_one_date(self) -> None:
         config = self._course_config(
             dates=[date(2026, 6, 13)],
