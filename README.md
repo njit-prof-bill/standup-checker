@@ -157,6 +157,7 @@ standup-checker \
   --thread-id 123456789012345678 \
   --target-date 2026-06-13 \
   --timezone America/New_York \
+  --output-file attendance.txt \
   --format text
 ```
 
@@ -187,12 +188,18 @@ Generate a CSV attendance matrix for manual grading review:
 standup-checker \
   --course-config examples/course-config.example.json \
   --bot-token "$DISCORD_BOT_TOKEN" \
+  --discord-request-delay-seconds 1.0 \
+  --output-file attendance.csv \
   --format csv
 ```
 
 Use `--format json` for machine-readable output in either mode. Use `--format csv` with `--course-config` to generate a student-by-date attendance matrix where cells are `1` for present and `0` for absent.
 
+If `--output-file` is provided, the CLI writes the rendered report to that path. If it is omitted, output continues to go to the console.
+
 `--debug-matching` applies only to legacy single-team mode. In canonical `--course-config` mode, the CLI prints a clear reminder that debug matching is legacy-only and continues normally.
+
+`--discord-request-delay-seconds` controls pacing between Discord thread/date fetches. It defaults to `1.0` second to reduce the chance of Discord API throttling during full-sprint or full-class runs. Lower values are possible, but the default is intentionally conservative.
 
 ## Testing
 

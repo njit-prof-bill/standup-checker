@@ -1,7 +1,8 @@
 from __future__ import annotations
 
 from datetime import datetime, time, timedelta, timezone
-from typing import Protocol
+from time import sleep as time_sleep
+from typing import Callable, Protocol
 from zoneinfo import ZoneInfo
 
 from standup_checker.attendance import build_attendance_report
@@ -22,9 +23,13 @@ def build_course_attendance_report(
     *,
     course_config: CourseConfig,
     fetch_thread_messages: FetchThreadMessages,
+    request_delay_seconds: float = 1.0,
+    sleep_fn: Callable[[float], None] = time_sleep,
 ) -> CourseAttendanceReport:
     course_timezone = ZoneInfo(course_config.timezone)
     reports = []
+    fetch_count = 0
+    total_fetches = len(course_config.teams) * len(course_config.dates)
 
     for course_team in course_config.teams:
         team = Team(
@@ -48,6 +53,9 @@ def build_course_attendance_report(
                     messages=messages,
                 )
             )
+            fetch_count += 1
+            if fetch_count < total_fetches and request_delay_seconds > 0:
+                sleep_fn(request_delay_seconds)
 
     return CourseAttendanceReport(
         course=course_config.course,
