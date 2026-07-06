@@ -201,6 +201,12 @@ If `--output-file` is provided, the CLI writes the rendered report to that path.
 
 `--discord-request-delay-seconds` controls pacing between Discord thread/date fetches. It defaults to `1.0` second to reduce the chance of Discord API throttling during full-sprint or full-class runs. Lower values are possible, but the default is intentionally conservative.
 
+The actual command I used:
+
+```bash
+python -m standup_checker.cli --course-config  ./data/cs-490-summer-2026.json --timezone America/New_York  --format csv  --discord-request-delay-seconds 1.0 --output-file ./data/attendance.csv
+```
+
 ## Testing
 
 ```bash
