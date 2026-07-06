@@ -5,7 +5,14 @@
   "dates": [
     "2026-06-03",
     "2026-06-04",
-    "2026-06-05"
+    "2026-06-05",
+    "2026-06-08",
+    "2026-06-09",
+    "2026-06-10",
+    "2026-06-11",
+    "2026-06-12",
+    "2026-06-15",
+    "2026-06-16"
   ],
   "teams": [
     {
@@ -143,6 +150,72 @@
           "student_name": "Ware, Joshua",
           "discord_user_id": "boopers.",
           "discord_display_name": "Josh Ware"
+        }
+      ]
+    },
+    {
+      "team_name": "Team101",
+      "thread_id": "1509994371821473803",
+      "students": [
+        {
+          "student_id": "nsatshan",
+          "student_name": "Atshan, Nada Sal",
+          "discord_user_id": "asalnat",
+          "discord_display_name": "asalnat"
+        },
+        {
+          "student_id": "relsayed80672005",
+          "student_name": "Elsayed, Roaa Mohamed",
+          "discord_user_id": "roaaelsayed",
+          "discord_display_name": "Roaa Elsayed"
+        },
+        {
+          "student_id": "JacobTalaat",
+          "student_name": "Moawad, Jacob Talaat Morkous",
+          "discord_user_id": "codedeuter",
+          "discord_display_name": "Jacob Moawad"
+        },
+        {
+          "student_id": "oms2304",
+          "student_name": "Sabiha, Omar M",
+          "discord_user_id": "omar_sabeha",
+          "discord_display_name": "omar_sabeha"
+        }
+      ]
+    },
+    {
+      "team_name": "The Shrimps",
+      "thread_id": "1509994585474994258",
+      "students": [
+        {
+          "student_id": "mc2266-cpu",
+          "student_name": "Chaparro Mendez, Melany",
+          "discord_user_id": "melx017",
+          "discord_display_name": "MELx017"
+        },
+        {
+          "student_id": "Raindrops095",
+          "student_name": "Christian, Rain Rebecca",
+          "discord_user_id": "raindrops_thunderstorms",
+          "discord_display_name": "Raindrops"
+        },
+        {
+          "student_id": "jcd0602",
+          "student_name": "De Vera, James Ryan C",
+          "discord_user_id": "cocoa_beann",
+          "discord_display_name": "James Ryan De Vera"
+        },
+        {
+          "student_id": "abg0206",
+          "student_name": "Gonzalez, Andy Bernard",
+          "discord_user_id": "andyg0116",
+          "discord_display_name": "andy g"
+        },
+        {
+          "student_id": "A-lai1",
+          "student_name": "Lai, Alvin",
+          "discord_user_id": "al1234567891011",
+          "discord_display_name": "Alvin Lai"
         }
       ]
     }
