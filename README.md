@@ -205,6 +205,7 @@ The actual command I used:
 
 ```bash
 python -m standup_checker.cli --course-config  ./data/cs-490-summer-2026.json --timezone America/New_York  --format csv  --discord-request-delay-seconds 1.0 --output-file ./data/attendance.csv
+python -m standup_checker.cli --course-config  ./data/cs-490-summer-2026-sprint-2.json --timezone America/New_York  --format csv  --discord-request-delay-seconds 1.0 --output-file ./data/attendance-sprint-2.csv
 ```
 
 ## Testing
