@@ -1,0 +1,223 @@
+{
+  "course": "CS 490",
+  "term": "Summer 2026",
+  "timezone": "America/New_York",
+  "dates": [
+    "2026-06-17",
+    "2026-06-18",
+    "2026-06-19",
+    "2026-06-22",
+    "2026-06-23",
+    "2026-06-24",
+    "2026-06-25",
+    "2026-06-26",
+    "2026-06-29",
+    "2026-06-30"
+  ],
+  "teams": [
+    {
+      "team_name": "ClaudeScholars",
+      "thread_id": "1509993938088493086",
+      "students": [
+        {
+          "student_id": "chryscay",
+          "student_name": "Cayetano, Chrystian",
+          "discord_user_id": "chrys3819",
+          "discord_display_name": "chrys"
+        },
+        {
+          "student_id": "thetalhachoudhry",
+          "student_name": "Choudhry, Talha Mohammad",
+          "discord_user_id": "talha09466",
+          "discord_display_name": "Talha"
+        },
+        {
+          "student_id": "christophercuzco",
+          "student_name": "Cuzco, Christopher",
+          "discord_user_id": "ewes",
+          "discord_display_name": "chris"
+        },
+        {
+          "student_id": "shoyos16",
+          "student_name": "Hoyos, Santiago",
+          "discord_user_id": "boogiewoogie16",
+          "discord_display_name": "BoogieWoogie16"
+        },
+        {
+          "student_id": "hammad-imtiaz",
+          "student_name": "Imtiaz, Hammad",
+          "discord_user_id": "hammad147",
+          "discord_display_name": "Hammad"
+        }
+      ]
+    },
+    {
+      "team_name": "breeze",
+      "thread_id": "1509994039754231828",
+      "students": [
+        {
+          "student_id": "Ramirezzz1",
+          "student_name": "Ramirez, Ronald Esgardo",
+          "discord_user_id": "ronald_40402",
+          "discord_display_name": "Ronald"
+        },
+        {
+          "student_id": "er355-rey",
+          "student_name": "Reyes, Esmeralda",
+          "discord_user_id": "esmeralda092333",
+          "discord_display_name": "Esmeralda"
+        },
+        {
+          "student_id": "Brittney S",
+          "student_name": "Solarte, Brittney Elizabeth",
+          "discord_user_id": "brittlit",
+          "discord_display_name": "Ronald"
+        },
+        {
+          "student_id": "sergioT05",
+          "student_name": "Tapia, Sergio",
+          "discord_user_id": "pinkie_405",
+          "discord_display_name": "Sergio T"
+        }
+      ]
+    },
+    {
+      "team_name": "MergeSurvivors",
+      "thread_id": "1509994199632576643",
+      "students": [
+        {
+          "student_id": "ElvisValcarcel",
+          "student_name": "Valcarcel, Elvis N",
+          "discord_user_id": "elvis.val",
+          "discord_display_name": "Elvis"
+        },
+        {
+          "student_id": "ak2755-2025",
+          "student_name": "Kim, Andrew",
+          "discord_user_id": "ndrewk",
+          "discord_display_name": "andrew"
+        },
+        {
+          "student_id": "khush367",
+          "student_name": "Patel, Khush Nimish",
+          "discord_user_id": "kuzshz",
+          "discord_display_name": "Khush"
+        },
+        {
+          "student_id": "Emersonp7",
+          "student_name": "Perez, Emerson Osmany",
+          "discord_user_id": "perez7",
+          "discord_display_name": "Perez"
+        }
+      ]
+    },
+    {
+      "team_name": "TeamDragons",
+      "thread_id": "1509994280452886618",
+      "students": [
+        {
+          "student_id": "rc74A",
+          "student_name": "Cotzomi, Ricardo",
+          "discord_user_id": "ricardo.c_14215",
+          "discord_display_name": "Ricardo Cotzomi (rc74)"
+        },
+        {
+          "student_id": "Jakemuzy",
+          "student_name": "Muzyka, Jake Michael",
+          "discord_user_id": "jmuzy04",
+          "discord_display_name": "Jake"
+        },
+        {
+          "student_id": "romeror7",
+          "student_name": "Romero, Ruben Anthony",
+          "discord_user_id": "ant01414",
+          "discord_display_name": "Ruben Romero"
+        },
+        {
+          "student_id": "JasonT598",
+          "student_name": "Tailor, Jason",
+          "discord_user_id": "canadianjason",
+          "discord_display_name": "Jason"
+        },
+        {
+          "student_id": "Joel-Wwalker",
+          "student_name": "Walker, Joel Matthew",
+          "discord_user_id": "verspasian",
+          "discord_display_name": "Joel"
+        },
+        {
+          "student_id": "jware692",
+          "student_name": "Ware, Joshua",
+          "discord_user_id": "boopers.",
+          "discord_display_name": "Josh Ware"
+        }
+      ]
+    },
+    {
+      "team_name": "Team101",
+      "thread_id": "1509994371821473803",
+      "students": [
+        {
+          "student_id": "nsatshan",
+          "student_name": "Atshan, Nada Sal",
+          "discord_user_id": "asalnat",
+          "discord_display_name": "asalnat"
+        },
+        {
+          "student_id": "relsayed80672005",
+          "student_name": "Elsayed, Roaa Mohamed",
+          "discord_user_id": "roaaelsayed",
+          "discord_display_name": "Roaa Elsayed"
+        },
+        {
+          "student_id": "JacobTalaat",
+          "student_name": "Moawad, Jacob Talaat Morkous",
+          "discord_user_id": "codedeuter",
+          "discord_display_name": "Jacob Moawad"
+        },
+        {
+          "student_id": "oms2304",
+          "student_name": "Sabiha, Omar M",
+          "discord_user_id": "omar_sabeha",
+          "discord_display_name": "omar_sabeha"
+        }
+      ]
+    },
+    {
+      "team_name": "The Shrimps",
+      "thread_id": "1509994585474994258",
+      "students": [
+        {
+          "student_id": "mc2266-cpu",
+          "student_name": "Chaparro Mendez, Melany",
+          "discord_user_id": "melx017",
+          "discord_display_name": "MELx017"
+        },
+        {
+          "student_id": "Raindrops095",
+          "student_name": "Christian, Rain Rebecca",
+          "discord_user_id": "raindrops_thunderstorms",
+          "discord_display_name": "Raindrops"
+        },
+        {
+          "student_id": "jcd0602",
+          "student_name": "De Vera, James Ryan C",
+          "discord_user_id": "cocoa_beann",
+          "discord_display_name": "James Ryan De Vera"
+        },
+        {
+          "student_id": "abg0206",
+          "student_name": "Gonzalez, Andy Bernard",
+          "discord_user_id": "andyg0116",
+          "discord_display_name": "andy g"
+        },
+        {
+          "student_id": "A-lai1",
+          "student_name": "Lai, Alvin",
+          "discord_user_id": "al1234567891011",
+          "discord_display_name": "Alvin Lai"
+        }
+      ]
+    }
+  ]
+}
