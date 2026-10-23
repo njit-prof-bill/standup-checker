@@ -28,26 +28,26 @@
         {
           "student_id": "DanC922",
           "student_name": "Colon, Daniel Logan",
-          "discord_user_id": "Dunder",
-          "discord_display_name": ""
+          "discord_user_id": "dannydunder",
+          "discord_display_name": "Dunder"
         },
         {
           "student_id": "MichaelG259",
           "student_name": "Grady, Michael A",
           "discord_user_id": "20boiledpotatoes",
-          "discord_display_name": ""
+          "discord_display_name": "Michael Grady"
         },
         {
           "student_id": "tommytoxic21",
           "student_name": "Toczek, Tommy Richard",
           "discord_user_id": "tommytoxic21",
-          "discord_display_name": ""
+          "discord_display_name": "tommy"
         },
         {
           "student_id": "adv0709",
           "student_name": "Vivanco, Adrian David",
           "discord_user_id": "adrox404",
-          "discord_display_name": ""
+          "discord_display_name": "Adrian"
         }
       ]
     },
@@ -56,40 +56,40 @@
       "thread_id": "1562143466064977920",
       "students": [
         {
-          "student_id": "",
-          "student_name": "",
-          "discord_user_id": "",
-          "discord_display_name": ""
+          "student_id": "bdorf04NJIT",
+          "student_name": "Dorfman, Brett Samuel",
+          "discord_user_id": "bdorf04",
+          "discord_display_name": "Brett"
         },
         {
-          "student_id": "",
-          "student_name": "",
-          "discord_user_id": "",
-          "discord_display_name": ""
+          "student_id": "ArnavKucheriya",
+          "student_name": "Kucheriya, Arnav",
+          "discord_user_id": "rnav1605",
+          "discord_display_name": "Nav"
         },
         {
-          "student_id": "",
-          "student_name": "",
-          "discord_user_id": "",
-          "discord_display_name": ""
+          "student_id": "IversonLopez",
+          "student_name": "Lopez-Nunez, Iverson Alexis",
+          "discord_user_id": "sinatra3689",
+          "discord_display_name": "sinatra"
         },
         {
-          "student_id": "",
-          "student_name": "",
-          "discord_user_id": "",
-          "discord_display_name": ""
+          "student_id": "Connor-P-Melton",
+          "student_name": "Melton, Connor Perry",
+          "discord_user_id": "connor_pm_",
+          "discord_display_name": "Connor"
         },
         {
-          "student_id": "",
-          "student_name": "",
-          "discord_user_id": "",
-          "discord_display_name": ""
+          "student_id": "lpucci",
+          "student_name": "Pucciarelli, Lorenzo M",
+          "discord_user_id": "ax.e",
+          "discord_display_name": "lorenzo"
         },
         {
-          "student_id": "",
-          "student_name": "",
-          "discord_user_id": "",
-          "discord_display_name": ""
+          "student_id": "kevrozario",
+          "student_name": "Rozario, Kevin",
+          "discord_user_id": "luhkbandz",
+          "discord_display_name": "Kevin"
         }
       ]
     }
