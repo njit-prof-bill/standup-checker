@@ -95,30 +95,72 @@
           "student_id": "amreenbhatia1",
           "student_name": "Bhatia, Amreen",
           "discord_user_id": "amreen_35519",
-          "discord_display_name": ""
+          "discord_display_name": "Amreen"
         },
         {
           "student_id": "JasmineG8493",
           "student_name": "Geo, Jasmine Rose",
           "discord_user_id": "kamsine7856",
-          "discord_display_name": ""
+          "discord_display_name": "Jasmine"
         },
         {
           "student_id": "varshanarayanann",
           "student_name": "Narayanan, Varsha",
           "discord_user_id": "varshanarayanan_87601",
-          "discord_display_name": ""
+          "discord_display_name": "Varsha Narayanan"
         },
         {
           "student_id": "nidhisakpal",
           "student_name": "Sakpal, Nidhi Ajay",
           "discord_user_id": "nidhisakpal",
-          "discord_display_name": ""
+          "discord_display_name": "Nidhi Sakpal"
         },
         {
           "student_id": "bhavss05",
           "student_name": "Saxena, Bhavyaa",
           "discord_user_id": "bhav_05",
+          "discord_display_name": "Bhav"
+        }
+     ]
+    },
+    {
+      "team_name": "Looks Good to Me",
+      "thread_id": "",
+      "students": [
+        {
+          "student_id": "",
+          "student_name": "",
+          "discord_user_id": "",
+          "discord_display_name": ""
+        },
+        {
+          "student_id": "",
+          "student_name": "",
+          "discord_user_id": "",
+          "discord_display_name": ""
+        },
+        {
+          "student_id": "",
+          "student_name": "",
+          "discord_user_id": "",
+          "discord_display_name": ""
+        },
+        {
+          "student_id": "",
+          "student_name": "",
+          "discord_user_id": "",
+          "discord_display_name": ""
+        },
+        {
+          "student_id": "",
+          "student_name": "",
+          "discord_user_id": "",
+          "discord_display_name": ""
+        },
+        {
+          "student_id": "",
+          "student_name": "",
+          "discord_user_id": "",
           "discord_display_name": ""
         }
      ]
