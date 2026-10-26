@@ -56,15 +56,39 @@
       "thread_id": "1564358915490193610",
       "students": [
         {
-          "student_id": "",
-          "student_name": "",
-          "discord_user_id": "",
+          "student_id": "shawnd121",
+          "student_name": "Daniel, Shawn",
+          "discord_user_id": "shawnd121",
           "discord_display_name": ""
         },
         {
-          "student_id": "",
-          "student_name": "",
-          "discord_user_id": "",
+          "student_id": "aum-2004",
+          "student_name": "Modi, Aryan Uday",
+          "discord_user_id": "aumodi2004_94781",
+          "discord_display_name": ""
+        },
+        {
+          "student_id": "Bansi3756",
+          "student_name": "Patel, Bansi V",
+          "discord_user_id": "bunny4919",
+          "discord_display_name": ""
+        },
+        {
+          "student_id": "neel-0064",
+          "student_name": "Patel, Neel Maulikkumar",
+          "discord_user_id": "neelpatel1659",
+          "discord_display_name": ""
+        },
+        {
+          "student_id": "shahdp2",
+          "student_name": "Shah, Deep Nitin",
+          "discord_user_id": "Deep",
+          "discord_display_name": ""
+        },
+        {
+          "student_id": "ms-00star",
+          "student_name": "Suescun, Melissa",
+          "discord_user_id": "mp000001",
           "discord_display_name": ""
         }
       ]
