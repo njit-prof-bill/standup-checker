@@ -20,15 +20,33 @@
       "thread_id": "1564358536597733438",
       "students": [
         {
-          "student_id": "",
-          "student_name": "",
-          "discord_user_id": "",
+          "student_id": "cjdgn",
+          "student_name": "De Guzman, Christian Justin Suico",
+          "discord_user_id": "cjdgn5",
           "discord_display_name": ""
         },
         {
-          "student_id": "",
-          "student_name": "",
-          "discord_user_id": "",
+          "student_id": "vpasia",
+          "student_name": "Pasia, Vincent Paul Macavinta",
+          "discord_user_id": "yungricebowl",
+          "discord_display_name": ""
+        },
+        {
+          "student_id": "Chris-1725",
+          "student_name": "Rodriguez, Christopher A",
+          "discord_user_id": "cryzzz_1",
+          "discord_display_name": ""
+        },
+        {
+          "student_id": "jt653-glitch",
+          "student_name": "Tabuena, Jose C",
+          "discord_user_id": "MrMonstrosity50",
+          "discord_display_name": ""
+        },
+        {
+          "student_id": "jeromefernandez15",
+          "student_name": "Fernandez, Jerome R",
+          "discord_user_id": "jeromef3931",
           "discord_display_name": ""
         }
       ]
