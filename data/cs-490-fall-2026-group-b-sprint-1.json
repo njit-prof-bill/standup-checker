@@ -16,7 +16,25 @@
   ],
   "teams": [
     {
-      "team_name": "",
+      "team_name": "Corona Light",
+      "thread_id": "1564358536597733438",
+      "students": [
+        {
+          "student_id": "",
+          "student_name": "",
+          "discord_user_id": "",
+          "discord_display_name": ""
+        },
+        {
+          "student_id": "",
+          "student_name": "",
+          "discord_user_id": "",
+          "discord_display_name": ""
+        }
+      ]
+    },
+    {
+      "team_name": "Fantastic Six",
       "thread_id": "",
       "students": [
         {
@@ -34,7 +52,43 @@
       ]
     },
     {
-      "team_name": "",
+      "team_name": "Frightening Coders",
+      "thread_id": "",
+      "students": [
+        {
+          "student_id": "",
+          "student_name": "",
+          "discord_user_id": "",
+          "discord_display_name": ""
+        },
+        {
+          "student_id": "",
+          "student_name": "",
+          "discord_user_id": "",
+          "discord_display_name": ""
+        }
+      ]
+    },
+    {
+      "team_name": "Roblox",
+      "thread_id": "",
+      "students": [
+        {
+          "student_id": "",
+          "student_name": "",
+          "discord_user_id": "",
+          "discord_display_name": ""
+        },
+        {
+          "student_id": "",
+          "student_name": "",
+          "discord_user_id": "",
+          "discord_display_name": ""
+        }
+      ]
+    },
+    {
+      "team_name": "team Three",
       "thread_id": "",
       "students": [
         {
