@@ -140,38 +140,38 @@
       "thread_id": "1564359369531851042",
       "students": [
         {
-          "student_id": "",
-          "student_name": "",
-          "discord_user_id": "",
+          "student_id": "NFurman0",
+          "student_name": "Furman, Nicholas Aidan",
+          "discord_user_id": "pug_gamer13",
           "discord_display_name": ""
         },
         {
-          "student_id": "",
-          "student_name": "",
-          "discord_user_id": "",
+          "student_id": "VictorJimenez3",
+          "student_name": "Jimenez, Victor Manuel",
+          "discord_user_id": "sweatycsmajor",
           "discord_display_name": ""
         },
         {
-          "student_id": "",
-          "student_name": "",
-          "discord_user_id": "",
+          "student_id": "Karlekar, Aakash Durgesh",
+          "student_name": "aakashk99",
+          "discord_user_id": "akarlekar9",
           "discord_display_name": ""
         },
         {
-          "student_id": "",
-          "student_name": "",
-          "discord_user_id": "",
+          "student_id": "diya-pottangadi",
+          "student_name": "Pottangadi, Diya",
+          "discord_user_id": "diyalovescookies",
           "discord_display_name": ""
         },
         {
-          "student_id": "",
-          "student_name": "",
-          "discord_user_id": "",
+          "student_id": "SaeedRayman",
+          "student_name": "Rayman, Saeed Idrees",
+          "discord_user_id": "banishedaura",
           "discord_display_name": ""
         },
         {
-          "student_id": "",
-          "student_name": "",
+          "student_id": "jonathanrepreza",
+          "student_name": "Repreza, Jonathan Antonio",
           "discord_user_id": "",
           "discord_display_name": ""
         }
@@ -182,15 +182,33 @@
       "thread_id": "1564359583160598588",
       "students": [
         {
-          "student_id": "",
-          "student_name": "",
-          "discord_user_id": "",
+          "student_id": "littlerootharun",
+          "student_name": "Incekara, Harun",
+          "discord_user_id": "haruniemaroonie",
           "discord_display_name": ""
         },
         {
-          "student_id": "",
-          "student_name": "",
-          "discord_user_id": "",
+          "student_id": "ds2327",
+          "student_name": "Salinas, Diego",
+          "discord_user_id": "3dsalinas",
+          "discord_display_name": ""
+        },
+        {
+          "student_id": "iamjustinvillamizar",
+          "student_name": "Villamizar, Justin",
+          "discord_user_id": "iamjustinvillamizar",
+          "discord_display_name": ""
+        },
+        {
+          "student_id": "AnhKhoi0310",
+          "student_name": "Tran, Khoi Anh",
+          "discord_user_id": "anhkhoi8706",
+          "discord_display_name": ""
+        },
+        {
+          "student_id": "aad94-AndreyDiaz",
+          "student_name": "Diaz-Ortega, Andrey",
+          "discord_user_id": "andrey_seven",
           "discord_display_name": ""
         }
       ]
